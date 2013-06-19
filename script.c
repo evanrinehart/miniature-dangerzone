@@ -31,3 +31,9 @@ void lua_close_(){
 void connect_event(int fd, const char* addr){
   // TODO execute kernel.connect_event(fd, addr)
 }
+
+unsigned wake_event(){
+  double micro;
+  micro = 234567; //TODO run kernel.wake_event
+  return micro > UINT_MAX ? UINT_MAX : micro;
+}

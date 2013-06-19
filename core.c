@@ -32,6 +32,7 @@ void core_loop(){
   unsigned char buf[BUF_SIZE];
   size_t n;
   int fd;
+  unsigned micro;
 
   for(;;){
     FD_ZERO(&fds);
@@ -40,8 +41,9 @@ void core_loop(){
       FD_SET(connections[i], &fds);
     }
 
-    timeout.tv_sec = 1; // TODO get this value from script
-    timeout.tv_usec = 0;
+    micro = wake_event();
+    timeout.tv_sec  = micro / 1000000;
+    timeout.tv_usec = micro % 1000000;
 
     ready = select(max_fd+1, &fds, NULL, NULL, &timeout);
 
