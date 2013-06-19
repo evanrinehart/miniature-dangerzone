@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
+#include <errno.h>
 #include <sys/select.h>
 #include <sys/socket.h>
 
@@ -81,21 +83,25 @@ void core_loop(){
         if(FD_ISSET(fd, &fds)){
           n = recv(fd, buf, BUF_SIZE, 0);
 
-          if(n < BUF_SIZE){
-            buf[n] = '\0';
-          }
-          else{
-            buf[BUF_SIZE-1] = '\0';
-          }
+          if(n == -1 || n == 0){
+            if(n == 0){
+              write_log("peer %d is now gone\n", fd);
+            }
+            else{ // -1
+              write_log("recv error (peer %d): %s\n", fd, strerror(errno));
+            }
 
-          if(n == 0){
-            write_log("peer %d is now gone\n", fd);
-            close(fd);
+            if(close(fd) == -1){
+              perror("close");
+              exit(EXIT_FAILURE);
+            }
+
             disconnect_event(fd);
             connections[i] = connections[conn_count-1];
             conn_count -= 1;
           }
           else{
+            buf[n < BUF_SIZE ? n : BUF_SIZE-1] = '\0';
             control_event(fd, buf);
           }
 
