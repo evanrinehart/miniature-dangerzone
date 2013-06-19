@@ -39,4 +39,6 @@ void write_log(const char* format, ...){
   }
 
   va_end(ap);
+
+  fflush(log_file);
 }

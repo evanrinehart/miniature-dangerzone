@@ -61,7 +61,7 @@ struct connection get_new_connection(){
   client = accept(server, NULL, NULL);
 
   conn.fd = client;
-  strcpy(conn.addr, "unknown");
+  strcpy(conn.addr, "unknown-address");
 
   return conn;
 }

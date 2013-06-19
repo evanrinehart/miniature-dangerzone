@@ -32,8 +32,16 @@ void connect_event(int fd, const char* addr){
   // TODO execute kernel.connect_event(fd, addr)
 }
 
+void disconnect_event(int fd){
+  // TODO execute kernel.disconnect_event(fd)
+}
+
 unsigned wake_event(){
   double micro;
   micro = 234567; //TODO run kernel.wake_event
   return micro > UINT_MAX ? UINT_MAX : micro;
+}
+
+void control_event(int fd, const char* text){
+  // TODO execute kernel control event(fd, text)
 }

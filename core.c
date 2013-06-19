@@ -5,6 +5,7 @@
 
 #include <net.h>
 #include <script.h>
+#include <log.h>
 
 /*
 core IO/time support
@@ -29,7 +30,7 @@ void core_loop(){
   struct timeval timeout;
   int server = get_server_fd();
   int max_fd = server;
-  unsigned char buf[BUF_SIZE];
+  char buf[BUF_SIZE];
   size_t n;
   int fd;
   unsigned micro;
@@ -52,16 +53,14 @@ void core_loop(){
       exit(EXIT_FAILURE);
     }
     else if(ready == 0){
-      // TODO wake up event
+      // do nothing
     }
     else{
       if(FD_ISSET(server, &fds)){
         new_client = get_new_connection();
-        printf("new connection:\n");
-        printf("fd = %d\n", new_client.fd);
-        printf("addr = %s\n", new_client.addr);
+        write_log("new connection (%d) from %s\n", new_client.fd, new_client.addr);
         if(conn_count == MAX_CONNECTIONS){
-          printf("too many connections!\n");
+          write_log("too many connections, dropping %d!\n", new_client.fd);
           // TODO notify client before disconnecting him
           disconnect(new_client.fd);
         }
@@ -89,14 +88,13 @@ void core_loop(){
           }
 
           if(n == 0){
-            printf("%d read zero bytes, disconnected\n", fd);
-            // TODO disconnect event
+            write_log("remote peer %d closed connection\n", fd);
+            disconnect_event(fd);
             connections[i] = connections[conn_count-1];
             conn_count -= 1;
           }
           else{
-            printf("read from %d: %s\n", fd, buf);
-            // TODO control_event
+            control_event(fd, buf);
           }
 
         }
