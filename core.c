@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/select.h>
+#include <sys/socket.h>
 
 #include <net.h>
 #include <script.h>
@@ -16,6 +17,7 @@ single threaded C
 */
 
 #define MAX_CONNECTIONS 10000
+#define BUF_SIZE 1024
 
 void core_loop(){
   int connections[MAX_CONNECTIONS];
@@ -26,27 +28,29 @@ void core_loop(){
   fd_set fds;
   struct timeval timeout;
   int server = get_server_fd();
-  int max_fd = server + 1;
+  int max_fd = server;
+  unsigned char buf[BUF_SIZE];
+  size_t n;
+  int fd;
 
   for(;;){
     FD_ZERO(&fds);
     FD_SET(server, &fds);
-
     for(i=0; i<conn_count; i++){
       FD_SET(connections[i], &fds);
     }
 
-    timeout.tv_sec = 1;
+    timeout.tv_sec = 1; // TODO get this value from script
     timeout.tv_usec = 0;
 
-    ready = select(max_fd, &fds, NULL, NULL, &timeout);
+    ready = select(max_fd+1, &fds, NULL, NULL, &timeout);
 
     if(ready == -1){
       perror("select");
       exit(EXIT_FAILURE);
     }
     else if(ready == 0){
-      // wake up event
+      // TODO wake up event
     }
     else{
       if(FD_ISSET(server, &fds)){
@@ -56,31 +60,46 @@ void core_loop(){
         printf("addr = %s\n", new_client.addr);
         if(conn_count == MAX_CONNECTIONS){
           printf("too many connections!\n");
+          // TODO notify client before disconnecting him
           disconnect(new_client.fd);
         }
         else{
           connections[conn_count] = new_client.fd;
           conn_count += 1;
           if(new_client.fd > max_fd){
-            max_fd = new_client.fd;
+            max_fd = new_client.fd;;
           }
           connect_event(new_client.fd, new_client.addr);
         }
       }
-      else{
-        for(i=0; i<conn_count; i++){
-          if(FD_ISSET(connections[i], &fds)){
-            //read
+
+      for(i=0; i<conn_count; i++){
+        fd = connections[i];
+
+        if(FD_ISSET(fd, &fds)){
+          n = recv(fd, buf, BUF_SIZE, 0);
+
+          if(n < BUF_SIZE){
+            buf[n] = '\0';
           }
+          else{
+            buf[BUF_SIZE-1] = '\0';
+          }
+
+          if(n == 0){
+            printf("%d read zero bytes, disconnected\n", fd);
+            // TODO disconnect event
+            connections[i] = connections[conn_count-1];
+            conn_count -= 1;
+          }
+          else{
+            printf("read from %d: %s\n", fd, buf);
+            // TODO control_event
+          }
+
         }
       }
+
     }
   }
 }
-
-//things we need:
-//  accepting (connectevent, fd_add)
-//  console (fgets, echo for now)
-//  input (read, control event)
-//  disconnect (read 0, disconnevent, close, fd_clear)
-//  timer (wakeup, time until next event)

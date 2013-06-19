@@ -16,7 +16,7 @@ function disconnect_event(conn_id)
   -- remove connection
 end
 
-function watchdog_event()
+function wake_event()
   -- check event queue
 end
 

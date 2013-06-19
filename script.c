@@ -29,5 +29,5 @@ void lua_close_(){
 
 
 void connect_event(int fd, const char* addr){
-  //execute kernel.connect_event(fd, addr)
+  // TODO execute kernel.connect_event(fd, addr)
 }

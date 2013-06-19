@@ -57,6 +57,7 @@ struct connection get_new_connection(){
   struct connection conn;
   int client;
 
+  // TODO get address
   client = accept(server, NULL, NULL);
 
   conn.fd = client;
