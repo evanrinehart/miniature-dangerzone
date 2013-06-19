@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+
+#include <net.h>
 
 static int server;
 
@@ -48,4 +51,16 @@ void net_close(){
 
 int get_server_fd(){
   return server;
+}
+
+struct connection get_new_connection(){
+  struct connection conn;
+  int client;
+
+  client = accept(server, NULL, NULL);
+
+  conn.fd = client;
+  strcpy(conn.addr, "unknown");
+
+  return conn;
 }

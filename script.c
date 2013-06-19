@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <lua.h>
+#include <lualib.h>
 #include <lauxlib.h>
 
 static lua_State* L;
@@ -24,4 +25,9 @@ void lua_init(){
 
 void lua_close_(){
   lua_close(L);
+}
+
+
+void connect_event(int fd, const char* addr){
+  //execute kernel.connect_event(fd, addr)
 }

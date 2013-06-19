@@ -7,14 +7,12 @@
 
 void clean_up(int unused);
 
-int main(int argc, char* argv){
+int main(int argc, char* argv[]){
 
   lua_init();
   listen_on(4321);
   signal(SIGINT, clean_up);
   core_loop();
-  shutdown(0);
-
   return 0;
 }
 

@@ -1,5 +1,9 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <sys/select.h>
+
+#include <net.h>
+#include <script.h>
 
 /*
 core IO/time support
@@ -11,40 +15,65 @@ autonomous activity.
 single threaded C
 */
 
+#define MAX_CONNECTIONS 10000
+
 void core_loop(){
+  int connections[MAX_CONNECTIONS];
+  int conn_count = 0;
+  int ready;
+  int i;
+  struct connection new_client;
   fd_set fds;
   struct timeval timeout;
-  int keep_looping = 1;
-  int total_fds = 1;
   int server = get_server_fd();
-  int ready;
+  int max_fd = server + 1;
 
-  FD_ZERO(&fds);
-  FD_SET(server, &fds);
+  for(;;){
+    FD_ZERO(&fds);
+    FD_SET(server, &fds);
 
-  timeout.tv_sec = 0;
-  timeout.tv_usec = 0;
+    for(i=0; i<conn_count; i++){
+      FD_SET(connections[i], &fds);
+    }
 
-  while(keep_looping){
-    ready = select(total_fds, &fds, NULL, NULL, &timeout);
+    timeout.tv_sec = 1;
+    timeout.tv_usec = 0;
+
+    ready = select(max_fd, &fds, NULL, NULL, &timeout);
 
     if(ready == -1){
       perror("select");
       exit(EXIT_FAILURE);
     }
-    else if(ready){
-      //FD_ISSET? for each fd
-      //server -> accept followed by new connection events
-      //player -> fgets+controlevent OR disconnect event
-      //stdin -> fgets and server function... keep looping?
+    else if(ready == 0){
+      // wake up event
     }
     else{
-      //watchdog timer!
-      //get time until next event
-      //set value of timeout struct
-
-      timeout.tv_sec = 1;
-      timeout.tv_usec = 0;
+      if(FD_ISSET(server, &fds)){
+        new_client = get_new_connection();
+        printf("new connection:\n");
+        printf("fd = %d\n", new_client.fd);
+        printf("addr = %s\n", new_client.addr);
+        if(conn_count == MAX_CONNECTIONS){
+          printf("too many connections!\n");
+          disconnect(new_client.fd);
+        }
+        else{
+          connections[conn_count] = new_client.fd;
+          conn_count += 1;
+          if(new_client.fd > max_fd){
+            max_fd = new_client.fd;
+          }
+          connect_event(new_client.fd, new_client.addr);
+        }
+      }
+      else{
+        for(i=0; i<conn_count; i++){
+          if(FD_ISSET(connections[i], &fds)){
+            //read
+          }
+        }
+      }
     }
   }
 }
