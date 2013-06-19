@@ -18,6 +18,7 @@ end
 
 function wake_event()
   -- check event queue
+  return 1000000
 end
 
 
