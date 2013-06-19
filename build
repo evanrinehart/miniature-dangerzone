@@ -1,1 +1,1 @@
-gcc -I. -o mud main.c core.c net.c script.c -llua -Wall
+gcc -I. -o mud main.c core.c net.c script.c log.c -llua -Wall
