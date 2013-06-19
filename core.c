@@ -91,11 +91,7 @@ void core_loop(){
               write_log("recv error (peer %d): %s\n", fd, strerror(errno));
             }
 
-            if(close(fd) == -1){
-              perror("close");
-              exit(EXIT_FAILURE);
-            }
-
+            close(fd);
             disconnect_event(fd);
             connections[i] = connections[conn_count-1];
             conn_count -= 1;
