@@ -15,7 +15,7 @@ void lua_init(){
 
   luaL_openlibs(L);
 
-  error = luaL_dofile(L, "main.lua");
+  error = luaL_dofile(L, "kernel.lua");
   if(error){
     fprintf(stderr, "%s\n", lua_tostring(L, -1));
     exit(1);

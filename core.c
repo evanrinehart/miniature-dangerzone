@@ -27,6 +27,7 @@ void core_loop(){
 
   while(keep_looping){
     ready = select(total_fds, &fds, NULL, NULL, &timeout);
+
     if(ready == -1){
       perror("select");
       exit(EXIT_FAILURE);
@@ -41,6 +42,16 @@ void core_loop(){
       //watchdog timer!
       //get time until next event
       //set value of timeout struct
+
+      timeout.tv_sec = 1;
+      timeout.tv_usec = 0;
     }
   }
 }
+
+//things we need:
+//  accepting (connectevent, fd_add)
+//  console (fgets, echo for now)
+//  input (read, control event)
+//  disconnect (read 0, disconnevent, close, fd_clear)
+//  timer (wakeup, time until next event)
