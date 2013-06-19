@@ -8,3 +8,6 @@ void disconnect(int client);
 void net_close(void);
 int get_server_fd(void);
 struct connection get_new_connection(void);
+
+int net_send(int fd, const char* data, size_t size);
+

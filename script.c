@@ -21,6 +21,13 @@ void lua_init(){
     fprintf(stderr, "%s\n", lua_tostring(L, -1));
     exit(1);
   }
+
+  // TODO register the following lua_CFunctions:
+  //   c_send(fd, string)
+  //   c_log(format, ...)
+  //   c_kick(fd)
+  //   c_checkpoint()
+  //   c_poweroff()
 }
 
 void lua_close_(){

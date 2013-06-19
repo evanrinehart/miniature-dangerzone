@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <sys/select.h>
 #include <sys/socket.h>
 
@@ -88,7 +89,8 @@ void core_loop(){
           }
 
           if(n == 0){
-            write_log("remote peer %d closed connection\n", fd);
+            write_log("peer %d is now gone\n", fd);
+            close(fd);
             disconnect_event(fd);
             connections[i] = connections[conn_count-1];
             conn_count -= 1;

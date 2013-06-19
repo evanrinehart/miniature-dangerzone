@@ -6,6 +6,7 @@
 #include <arpa/inet.h>
 
 #include <net.h>
+#include <log.h>
 
 static int server;
 
@@ -42,7 +43,12 @@ void listen_on(int port){
 }
 
 void disconnect(int client){
-  close(client);
+  write_log("disconnecting peer %d ... \n", client);
+
+  if(shutdown(client, SHUT_RDWR) == -1){
+    perror("shutdown");
+    exit(EXIT_FAILURE);
+  }
 }
 
 void net_close(){
@@ -64,4 +70,8 @@ struct connection get_new_connection(){
   strcpy(conn.addr, "unknown-address");
 
   return conn;
+}
+
+int net_send(int fd, const char* data, size_t size){
+  return send(fd, data, size, 0);
 }
