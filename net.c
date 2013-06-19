@@ -17,11 +17,17 @@ static int server;
 // c = accept(s) (eventually)
 void listen_on(int port){
   struct sockaddr_in addr;
+  int reuse_addr = 1;
 
   server = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
   
   if(server == -1){
     perror("socket");
+    exit(EXIT_FAILURE);
+  }
+
+  if(setsockopt(server, SOL_SOCKET, SO_REUSEADDR, &reuse_addr, sizeof(reuse_addr))){
+    perror("setsockopt");
     exit(EXIT_FAILURE);
   }
 
