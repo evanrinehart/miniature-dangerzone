@@ -37,6 +37,7 @@ void core_loop(){
   size_t n;
   int fd;
   unsigned micro;
+  int wait_forever;
 
   for(;;){
     FD_ZERO(&fds);
@@ -45,11 +46,11 @@ void core_loop(){
       FD_SET(connections[i], &fds);
     }
 
-    micro = wake_signal();
+    wait_forever = wake_signal(&micro);
     timeout.tv_sec  = micro / 1000000;
     timeout.tv_usec = micro % 1000000;
 
-    ready = select(max_fd+1, &fds, NULL, NULL, &timeout);
+    ready = select(max_fd+1, &fds, NULL, NULL, wait_forever ? NULL : &timeout);
 
     if(ready == -1){
       perror("select");

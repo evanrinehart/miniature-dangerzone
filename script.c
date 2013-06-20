@@ -65,7 +65,7 @@ void disconnect_signal(int fd){
   }
 }
 
-unsigned wake_signal(){
+int wake_signal(unsigned* output){
   double micro;
   int error;
 
@@ -77,7 +77,10 @@ unsigned wake_signal(){
     exit(EXIT_FAILURE);
   }
 
-  if(!lua_isnumber(L, -1)){
+  if(lua_isnil(L, -1)){
+    return 1;
+  }
+  else if(!lua_isnumber(L, -1)){
     fprintf(
       stderr,
       "wake_event returned unexpected type (%s)\n",
@@ -86,11 +89,14 @@ unsigned wake_signal(){
     lua_pop(L, 1);
     exit(EXIT_FAILURE);
   }
+  else{
+    micro = lua_tonumber(L, -1);
+    lua_pop(L, 1);
 
-  micro = lua_tonumber(L, -1);
-  lua_pop(L, 1);
+    *output = micro > UINT_MAX ? UINT_MAX : micro;
+    return 0;
+  }
 
-  return micro > UINT_MAX ? UINT_MAX : micro;
 }
 
 void control_signal(int fd, const char* text){

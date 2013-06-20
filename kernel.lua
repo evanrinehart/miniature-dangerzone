@@ -16,6 +16,7 @@ function control_signal(conn_id, text)
   print("control_signal")
   print(conn_id)
   print(text)
+
   -- use dialog on text
 end
 
@@ -27,8 +28,7 @@ function disconnect_signal(conn_id)
 end
 
 function wake_signal()
-  -- check event queue
-  return 1000000
+  return nil 
 end
 
 
