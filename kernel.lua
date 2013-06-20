@@ -2,7 +2,6 @@ package.path = package.path .. ""
 
 require('events')
 
-
 function connect_signal(conn_id, addr)
   print("connect_signal")
   print(conn_id)

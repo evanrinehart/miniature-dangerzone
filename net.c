@@ -4,11 +4,12 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <errno.h>
 
 #include <net.h>
 #include <log.h>
 
-static int server;
+static int server = -1;
 
 // to start a listening socket the steps are:
 // s = socket()
@@ -58,7 +59,10 @@ void disconnect(int client){
 }
 
 void net_close(){
-  close(server);
+  if(server != -1){
+    close(server);
+    server = -1;
+  }
 }
 
 int get_server_fd(){
@@ -79,5 +83,12 @@ struct connection get_new_connection(){
 }
 
 int net_send(int fd, const char* data, size_t size){
-  return send(fd, data, size, 0);
+  int n = send(fd, data, size, 0);
+  if(n == -1){
+    fprintf(stderr, "net_send: %s\n", strerror(errno));
+    return -1;
+  }
+  else{
+    return n;
+  }
 }

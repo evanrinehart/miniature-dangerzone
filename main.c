@@ -12,10 +12,10 @@ int main(int argc, char* argv[]){
 
   open_log("log/server.log");
   write_log("*** SERVER BOOT ***\n");
+  signal(SIGINT, clean_up);
 
   lua_init();
   listen_on(4321);
-  signal(SIGINT, clean_up);
   core_loop();
   return 0;
 }

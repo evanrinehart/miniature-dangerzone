@@ -3,6 +3,8 @@
 #include <lualib.h>
 #include <lauxlib.h>
 
+#include <eroc.h>
+
 static lua_State* L;
 
 void lua_init(){
@@ -16,18 +18,19 @@ void lua_init(){
 
   luaL_openlibs(L);
 
+  lua_register(L, "c_send", c_send);
+  lua_register(L, "c_log", c_log);
+  lua_register(L, "c_kick", c_kick);
+  lua_register(L, "c_checkpoint", c_checkpoint);
+  lua_register(L, "c_poweroff", c_poweroff);
+  lua_register(L, "c_clock", c_clock);
+
   error = luaL_dofile(L, "kernel.lua");
   if(error){
     fprintf(stderr, "%s\n", lua_tostring(L, -1));
     exit(1);
   }
 
-  // TODO register the following lua_CFunctions:
-  //   c_send(fd, string)
-  //   c_log(format, ...)
-  //   c_kick(fd)
-  //   c_checkpoint()
-  //   c_poweroff()
 }
 
 void lua_close_(){
