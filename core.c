@@ -45,7 +45,7 @@ void core_loop(){
       FD_SET(connections[i], &fds);
     }
 
-    micro = wake_event();
+    micro = wake_signal();
     timeout.tv_sec  = micro / 1000000;
     timeout.tv_usec = micro % 1000000;
 
@@ -73,7 +73,7 @@ void core_loop(){
           if(new_client.fd > max_fd){
             max_fd = new_client.fd;;
           }
-          connect_event(new_client.fd, new_client.addr);
+          connect_signal(new_client.fd, new_client.addr);
         }
       }
 
@@ -92,13 +92,13 @@ void core_loop(){
             }
 
             close(fd);
-            disconnect_event(fd);
+            disconnect_signal(fd);
             connections[i] = connections[conn_count-1];
             conn_count -= 1;
           }
           else{
             buf[n < BUF_SIZE ? n : BUF_SIZE-1] = '\0';
-            control_event(fd, buf);
+            control_signal(fd, buf);
           }
 
         }

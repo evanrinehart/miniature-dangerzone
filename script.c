@@ -35,10 +35,10 @@ void lua_close_(){
 }
 
 
-void connect_event(int fd, const char* addr){
+void connect_signal(int fd, const char* addr){
   int error;
 
-  lua_getglobal(L, "connect_event");
+  lua_getglobal(L, "connect_signal");
   lua_pushinteger(L, fd);
   lua_pushstring(L, addr);
   error = lua_pcall(L, 2, 0, 0);
@@ -49,10 +49,10 @@ void connect_event(int fd, const char* addr){
   }
 }
 
-void disconnect_event(int fd){
+void disconnect_signal(int fd){
   int error;
 
-  lua_getglobal(L, "disconnect_event");
+  lua_getglobal(L, "disconnect_signal");
   lua_pushinteger(L, fd);
   error = lua_pcall(L, 1, 0, 0);
   if(error){
@@ -62,11 +62,11 @@ void disconnect_event(int fd){
   }
 }
 
-unsigned wake_event(){
+unsigned wake_signal(){
   double micro;
   int error;
 
-  lua_getglobal(L, "wake_event");
+  lua_getglobal(L, "wake_signal");
   error = lua_pcall(L, 0, 1, 0);
   if(error){
     fprintf(stderr, "%s", lua_tostring(L, -1));
@@ -90,10 +90,10 @@ unsigned wake_event(){
   return micro > UINT_MAX ? UINT_MAX : micro;
 }
 
-void control_event(int fd, const char* text){
+void control_signal(int fd, const char* text){
   int error;
 
-  lua_getglobal(L, "control_event");
+  lua_getglobal(L, "control_signal");
   lua_pushinteger(L, fd);
   lua_pushstring(L, text);
   error = lua_pcall(L, 2, 0, 0);

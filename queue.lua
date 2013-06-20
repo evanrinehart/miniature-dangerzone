@@ -51,9 +51,19 @@ local function take(head)
   end
 end
 
+local function peek(head)
+  return function()
+    if head.next == nil then
+      return nil
+    else
+      return head.next.value
+    end
+  end
+end
+
 local function insert(head, compare)
   return function(x)
-    if is_empty(head)() then
+    if head.next == nil then
       head.next = mk_node(x, nil)
     else
       local parent = search(head, x, compare)
@@ -76,7 +86,7 @@ end
 
 local function debug(head, show)
   return function()
-    if is_empty(head)() then
+    if head.next == nil then
       print("(empty queue)")
     else
       each(head, function(x, i) print(show(x)) end)
@@ -84,8 +94,14 @@ local function debug(head, show)
   end
 end
 
+local function remove(head, get_id)
+  return function(id)
+    -- TODO
+  end
+end
+
 return {
-  new = function(compare, show)
+  new = function(compare, get_id, show)
     local head = mk_node(nil, nil)
 
     return {
@@ -93,6 +109,8 @@ return {
       take = take(head),
       insert = insert(head, compare),
       to_table = to_table(head),
+      remove = remove(head, get_id),
+      peek = peek(head),
       debug = debug(head, show)
     }
   end
