@@ -33,7 +33,7 @@ local function next_time()
 end
 
 local function each_ready_event(now, f)
-  local t = next_time
+  local t = next_time()
   if t and t <= now then
     local e = queue.take()
     f(e)

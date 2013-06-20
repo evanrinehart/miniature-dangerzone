@@ -28,7 +28,13 @@ function disconnect_signal(conn_id)
 end
 
 function wake_signal()
-  return nil 
+  local now = c_clock()
+
+  the_event_queue.each_ready_event(now, function(e)
+    print("an event happened?!")
+  end)
+
+  return the_event_queue.next_time()
 end
 
 
