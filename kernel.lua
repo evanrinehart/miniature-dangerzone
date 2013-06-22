@@ -1,40 +1,53 @@
 package.path = package.path .. ""
 
 require('events')
+Players = require('player')
+Dialog = require('dialog')
 
-function connect_signal(conn_id, addr)
+function connect_signal(fd, addr)
   print("connect_signal")
-  print(conn_id)
+  print(fd)
   print(addr)
-  -- set up connection
-  -- install login dialog
-  -- generate id
-  -- send greeting
+
+  login = Dialog.new(Dialog.login)
+  player = Players.new(fd, addr, login)
+  Players.register(player)
+
+Players.debug()
 end
 
-function control_signal(conn_id, text)
+function control_signal(fd, text)
   print("control_signal")
-  print(conn_id)
-  print(text)
 
-  -- use dialog on text
+  player = Players.lookup(fd)
+  assert(player, "control_signal: unable to find player fd="..fd)
+print("control", fd, text)
+  player.parse(text)
 end
 
-function disconnect_signal(conn_id)
+function disconnect_signal(fd)
   print("disconnect_signal")
-  print(conn_id)
-  -- notify things about this
-  -- remove connection
+  print(fd)
+
+  -- notify things before
+  Players.clear(fd)
+  -- notify things after ?
+  --
+Players.debug()
 end
 
-function wake_signal()
-  local now = c_clock()
-
+function wake_signal(now)
   the_event_queue.each_ready_event(now, function(e)
     print("an event happened?!")
   end)
 
-  return the_event_queue.next_time()
+  local next_time = the_event_queue.next_time()
+
+  if next_time then
+    return math.ceil((next_time - now)*1000000);
+  else
+    return nil
+  end
 end
 
 

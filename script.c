@@ -4,6 +4,7 @@
 #include <lauxlib.h>
 
 #include <eroc.h>
+#include <clock.h>
 
 static lua_State* L;
 
@@ -69,8 +70,11 @@ int wake_signal(unsigned* output){
   double micro;
   int error;
 
+  double now = timestamp();
+
   lua_getglobal(L, "wake_signal");
-  error = lua_pcall(L, 0, 1, 0);
+  lua_pushnumber(L, now);
+  error = lua_pcall(L, 1, 1, 0);
   if(error){
     fprintf(stderr, "%s", lua_tostring(L, -1));
     lua_pop(L, 1);
@@ -107,7 +111,7 @@ void control_signal(int fd, const char* text){
   lua_pushstring(L, text);
   error = lua_pcall(L, 2, 0, 0);
   if(error){
-    fprintf(stderr, "%s", lua_tostring(L, -1));
+    fprintf(stderr, "%s\n", lua_tostring(L, -1));
     lua_pop(L, 1);
     exit(EXIT_FAILURE);
   }
