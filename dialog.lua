@@ -1,3 +1,13 @@
+local Auth = require('auth')
+
+local function copy(tab)
+  tab2 = {}
+  for i, x in pairs(tab) do
+    tab2[i] = x
+  end
+  return tab2
+end
+
 local function dialog_environment(specials)
   local env = {
     error = error,
@@ -73,7 +83,8 @@ local function start(fd, dialog)
     ask = ask,
     tell = tell,
     quit = quit,
-    sleep = sleep
+    sleep = sleep,
+    Auth = copy(Auth)
   })
 
   setfenv(dialog, env)

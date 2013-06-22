@@ -13,7 +13,7 @@ local function debug()
 end
 
 local function mk_login()
-  return function()
+  local function login()
     tell("Miniature-Dangerzone MUD\n")
     tell("                (C) 2013\n\n")
     tell("username? ")
@@ -21,11 +21,19 @@ local function mk_login()
     tell("password? ")
     password = ask()
 
-    quit()
+    if Auth.check(username, password) then
+      tell("\n\n\n")
+      return login()
+    else
+      tell("WRONG\n")
+      quit()
+    end
   end
+
+  return login
 end
 
-local function read(split_buffer, dialog)
+local function read(fd, split_buffer, dialog)
   return function(input)
     message = split_buffer(input)
     if message then
@@ -45,7 +53,7 @@ local function mk_player(fd, addr)
   local player = {
     fd = fd,
     addr = addr,
-    read = read(split_buffer, dialog)
+    read = read(fd, split_buffer, dialog)
   }
 
   return player
