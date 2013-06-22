@@ -97,10 +97,17 @@ local function begin_dialog(fd, dialog)
     c_kick(fd)
   end
 
+  local function sleep()
+    -- schedule an event
+    -- disable input
+    --   in the event, enable input and resume
+  end
+
   local env = dialog_environment({
     ask = ask,
     tell = tell,
-    quit = quit
+    quit = quit,
+    sleep = sleep
   })
 
 -- QUESTION
@@ -126,12 +133,14 @@ local function begin_dialog(fd, dialog)
 end
 
 local function login()
-  tell("you finally made it\n")
-  x = ask()
-  tell("you said: "..x.."\n")
-  tell("well time for you to go away\n")
-  --quit()
-  error('i screw up!')
+  tell("Miniature-Dangerzone MUD\n")
+  tell("                (C) 2013\n\n")
+  tell("username? ")
+  username = ask()
+  tell("password? ")
+  password = ask()
+
+  quit()
 end
 
 local function mk_player(fd, addr)
