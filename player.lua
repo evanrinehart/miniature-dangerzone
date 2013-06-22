@@ -17,7 +17,7 @@ local function line(x)
 end
 
 -- used to produce lines from the input stream
-local mk_line_parser = function()
+local mk_split_buffer = function()
   local buffer = ""
   return function(input)
     buffer = buffer .. input
@@ -97,7 +97,7 @@ local function begin_dialog(fd, dialog)
     c_kick(fd)
   end
 
-  local function sleep()
+  local function sleep(time_diff)
     -- schedule an event
     -- disable input
     --   in the event, enable input and resume
@@ -110,10 +110,6 @@ local function begin_dialog(fd, dialog)
     sleep = sleep
   })
 
--- QUESTION
--- does this set environment on the login dialog
--- for everyone? does this affect already running dialogs
--- which (may have) descended from login
   setfenv(dialog, env)
 
   local co = coroutine.create(dialog)
@@ -132,25 +128,27 @@ local function begin_dialog(fd, dialog)
 
 end
 
-local function login()
-  tell("Miniature-Dangerzone MUD\n")
-  tell("                (C) 2013\n\n")
-  tell("username? ")
-  username = ask()
-  tell("password? ")
-  password = ask()
+local function mk_login()
+  return function()
+    tell("Miniature-Dangerzone MUD\n")
+    tell("                (C) 2013\n\n")
+    tell("username? ")
+    username = ask()
+    tell("password? ")
+    password = ask()
 
-  quit()
+    quit()
+  end
 end
 
 local function mk_player(fd, addr)
-  local split_buffer = mk_line_parser()
+  local split_buffer = mk_split_buffer()
   local char = {}
-  local dialog = begin_dialog(fd, login)
+  local dialog = begin_dialog(fd, mk_login())
   local player = {
     fd = fd,
     addr = addr,
-    parse = function(input)
+    read = function(input)
       message = split_buffer(input)
       if message then
         error_message = dialog(message)
@@ -166,10 +164,6 @@ local function mk_player(fd, addr)
 end
 
 local function debug()
-  local function show(p)
-    return "("..p.fd..","..p.dialog..")"
-  end
-
   if next(the_player_table) == nil then
     print("(empty player table)")
   end

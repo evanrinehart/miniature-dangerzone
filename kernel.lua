@@ -22,7 +22,7 @@ function control_signal(fd, text)
   player = Players.lookup(fd)
   assert(player, "control_signal: unable to find player fd="..fd)
 print("control", fd, text)
-  player.parse(text)
+  player.read(text)
 end
 
 function disconnect_signal(fd)
