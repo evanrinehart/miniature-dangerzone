@@ -1,16 +1,14 @@
 package.path = package.path .. ""
 
 require('events')
-Players = require('player')
-Dialog = require('dialog')
+local Players = require('player')
 
 function connect_signal(fd, addr)
   print("connect_signal")
   print(fd)
   print(addr)
 
-  login = Dialog.new(Dialog.login)
-  player = Players.new(fd, addr, login)
+  player = Players.new(fd, addr)
   Players.register(player)
 
 Players.debug()
