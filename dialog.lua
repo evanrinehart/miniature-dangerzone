@@ -1,98 +1,18 @@
-local Auth = require('auth')
-
-local function copy(tab)
-  tab2 = {}
-  for i, x in pairs(tab) do
-    tab2[i] = x
-  end
-  return tab2
+function tell(player, text)
+  c_send(player.fd, text)
 end
 
-local function dialog_environment(specials)
-  local env = {
-    error = error,
-    assert = assert,
-    ipairs = ipairs,
-    pairs = pairs,
-    next = next,
-    select = select,
-    tonumber = tonumber,
-    tostring = tostring,
-    type = type,
-    unpack = unpack
-  }
-
-  env.string = {}
-  env.table = {}
-  env.math = {}
-
-  env.string.byte = string.byte
-  env.string.char = string.char
-  env.string.find = string.find
-  env.string.format = string.format
-  env.string.gmatch = string.gmatch
-  env.string.gsub = string.gsub
-  env.string.len = string.len
-  env.string.lower = string.lower
-  env.string.match = string.match
-  env.string.rep = string.rep
-  env.string.reverse = string.reverse
-  env.string.sub = string.sub
-  env.string.upper = string.upper
-  env.table.insert = table.insert
-  env.table.maxn = table.maxn
-  env.table.remove = table.remove
-  env.table.sort = table.sort
-  env.math.abs = math.abs
-  env.math.abs = math.abs
-  env.math.abs = math.abs
-  env.math.abs = math.abs
-  env.math.abs = math.abs
-  env.math.abs = math.abs
-  env.math.abs = math.abs
-  env.math.abs = math.abs
-  env.math.abs = math.abs
-
-  for name, f in pairs(specials) do
-    env[name] = f
-  end
-
-  return env
+function ask()
+  return coroutine.yield()
 end
 
-local function start(fd, dialog)
-  local function ask()
-    return coroutine.yield()
-  end
+function disconnect(player)
+  c_kick(player.id)
+end
 
-  local function tell(text)
-    c_send(fd, text)
-  end
-
-  local function quit()
-    c_kick(fd)
-  end
-
-  local function sleep(time_diff)
-    -- schedule an event
-    -- disable input
-    --   in the event, enable input and resume
-  end
-
-  local env = dialog_environment({
-    ask = ask,
-    tell = tell,
-    quit = quit,
-    sleep = sleep,
-    Auth = copy(Auth)
-  })
-
-  setfenv(dialog, env)
-
+function start_dialog(player, dialog)
   local co = coroutine.create(dialog)
-
-  assert(coroutine.resume(co))
-
+  assert(coroutine.resume(co, player))
   return function(input)
     assert(coroutine.status(co) == "suspended", "tried to use a crashed dialog")
     ok, err = coroutine.resume(co, input)
@@ -102,9 +22,5 @@ local function start(fd, dialog)
       return err
     end
   end
-
 end
 
-return {
-  start = start
-}

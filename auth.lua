@@ -1,7 +1,3 @@
-function check(username, password)
+function auth_check(username, password)
   return true
 end
-
-return {
-  check = check
-}

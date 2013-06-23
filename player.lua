@@ -1,77 +1,35 @@
-local Dialog = require('dialog')
-local Stream = require('stream')
+require('dialog')
+require('stream')
+require('login')
 
-local the_player_table = {}
-
-local function debug()
-  if next(the_player_table) == nil then
-    print("(empty player table)")
-  end
-  for fd, player in pairs(the_player_table) do
-    print(fd, player)
-  end
-end
-
-local function mk_login()
-  local function login()
-    tell("Miniature-Dangerzone MUD\n")
-    tell("                (C) 2013\n\n")
-    tell("username? ")
-    username = ask()
-    tell("password? ")
-    password = ask()
-
-    if Auth.check(username, password) then
-      tell("\n\n\n")
-      return login()
-    else
-      tell("WRONG\n")
-      quit()
-    end
-  end
-
-  return login
-end
-
-local function read(fd, split_buffer, dialog)
-  return function(input)
-    message = split_buffer(input)
-    if message then
-      error_message = dialog(message)
-      if error_message then
-        c_send(fd, error_message)
-        c_kick(fd)
-      end
+local function take_input(self, input)
+  local message = self.input_buffer(input)
+  local dialog = self.dialog
+  local fd = self.fd
+  if message then
+    error_message = dialog(message)
+    if error_message then
+      c_send(fd, error_message)
+      c_send(fd, "\n")
+      c_kick(fd)
     end
   end
 end
 
-local function mk_player(fd, addr)
-  local split_buffer = Stream.mk_split_buffer()
-  local char = {}
-  local dialog = Dialog.start(fd, mk_login())
-  local player = {
+local function boot(self)
+  self.dialog = start_dialog(self, login_dialog)
+end
+
+function mk_player(fd, addr)
+  return {
     fd = fd,
     addr = addr,
-    read = read(fd, split_buffer, dialog)
-  }
+    char = nil,
+    dialog = nil,
+    input_buffer = mk_input_buffer(),
 
-  return player
+    boot = boot,
+    take_input = take_input
+  }
 end
 
-return {
-  new = mk_player,
-  register = function(player)
-    local fd = player.fd
-    assert(player, "register player: player is nil")
-    assert(the_player_table[fd] == nil, "register player: fd already in use")
-    the_player_table[fd] = player
-  end,
-  clear = function(fd)
-    the_player_table[fd] = nil
-  end,
-  lookup = function(fd)
-    return the_player_table[fd]
-  end,
-  debug = debug
-}

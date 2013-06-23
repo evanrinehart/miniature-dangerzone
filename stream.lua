@@ -16,7 +16,7 @@ local function line(x)
 end
 
 -- used to produce lines from the input stream
-local mk_split_buffer = function()
+function mk_input_buffer()
   local buffer = ""
   return function(input)
     buffer = buffer .. input
@@ -30,7 +30,3 @@ local mk_split_buffer = function()
     end
   end
 end
-
-return {
-  mk_split_buffer = mk_split_buffer
-}

@@ -1,26 +1,28 @@
 package.path = package.path .. ""
 
+require('player')
+require('player_table')
+
 require('events')
-local Players = require('player')
 
 function connect_signal(fd, addr)
   print("connect_signal")
   print(fd)
   print(addr)
 
-  player = Players.new(fd, addr)
-  Players.register(player)
-
-Players.debug()
+  player = mk_player(fd, addr)
+  register_player(player)
+debug_player_table()
+  player:boot()
 end
 
 function control_signal(fd, text)
   print("control_signal")
 
-  player = Players.lookup(fd)
+  player = lookup_player(fd)
   assert(player, "control_signal: unable to find player fd="..fd)
 print("control", fd, text)
-  player.read(text)
+  player:take_input(text)
 end
 
 function disconnect_signal(fd)
@@ -28,10 +30,10 @@ function disconnect_signal(fd)
   print(fd)
 
   -- notify things before
-  Players.clear(fd)
+  clear_player(fd)
   -- notify things after ?
   --
-Players.debug()
+debug_player_table()
 end
 
 function wake_signal(now)
