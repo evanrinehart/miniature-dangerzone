@@ -7,7 +7,7 @@ function ask()
 end
 
 function disconnect(player)
-  c_kick(player.id)
+  c_kick(player.fd)
 end
 
 function start_dialog(player, dialog)

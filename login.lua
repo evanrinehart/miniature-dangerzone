@@ -1,4 +1,4 @@
-require('auth')
+require('base')
 require('dialog')
 
 local function main_dialog(me)
@@ -15,7 +15,7 @@ function login_dialog(me)
   tell(me, "password? ")
   password = ask()
 
-  if auth_check(username, password) then
+  if db_check_account_password(username, password) then
     -- load character
     main_dialog(me)
   else
