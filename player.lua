@@ -25,6 +25,7 @@ function mk_player(fd, addr)
     fd = fd,
     addr = addr,
     char = nil,
+    creature = nil,
     dialog = nil,
     input_buffer = mk_input_buffer(),
 

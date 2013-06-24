@@ -13,6 +13,9 @@
 -- history    (seq, date, description)
 -- zones      (id, author, description)
 
+-- indexes
+-- account -> characters
+
 
 local rooms = {
   [1] = {
@@ -36,10 +39,10 @@ local creatures = {
 local characters = {
   [1] = {
     id = 1,
-    names = {'barfos'},
+    name = 'barfos',
     account = 'barfos',
     status = nil,
-    creature = 1
+    creature_id = 1
   }
 }
 
@@ -50,20 +53,27 @@ local accounts = {
   }
 }
 
-local tables = {
-  rooms = rooms,
-  creatures = creatures,
-  characters = characters,
-  accounts = accounts
+local characters_in_account = {
+  barfos = {1}
 }
 
-function db_find(tab, key)
-  return (assert(tables[tab][key], "data anomaly, record not found, "..tab..':'..key))
+local function use_index(index, target, key)
+  local results = {}
+  for k, v in ipairs(index[key]) do
+    results[k] = target[v]
+  end
+  return results
 end
 
 function db_check_account_password(username, password)
   acc = accounts[username]
   return acc and acc.password == password
 end
-    
 
+function db_get_account_chars(username)
+  return use_index(characters_in_account, characters, username)
+end
+
+function db_find_creature(id)
+  return (assert(creatures[id], "creature "..id.." not found"))
+end
