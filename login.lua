@@ -1,5 +1,6 @@
 require('base')
 require('dialog')
+require('command')
 
 local function main_dialog(me)
   -- do a look command
@@ -8,7 +9,20 @@ local function main_dialog(me)
   --   parse a command
   -- end
   tell(me, "hp:10/10 st:10/10> ")
-  ask()
+  local message = ask()
+  local command = parse_command(message)
+  if not command then
+    tell(me, "unknown command\n")
+    return main_dialog(me)
+  end
+
+  local c, params = command[1], command[2]
+  if c == 'look' then
+    print("LOOK")
+  else
+    print('unknown command')
+  end
+
   return main_dialog(me)
 end
 
