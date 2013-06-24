@@ -20,17 +20,27 @@ local function boot(self)
   self.dialog = start_dialog(self, login_dialog)
 end
 
+local function location(self)
+  if self.creature then
+    return self.creature.location
+  else
+    error("do not request location when undefined")
+  end
+end
+
 function mk_player(fd, addr)
   return {
     fd = fd,
     addr = addr,
+    account = nil,
     char = nil,
     creature = nil,
     dialog = nil,
     input_buffer = mk_input_buffer(),
 
     boot = boot,
-    take_input = take_input
+    take_input = take_input,
+    location = location
   }
 end
 

@@ -2,7 +2,12 @@ require('base')
 require('dialog')
 
 local function main_dialog(me)
-  tell(me, "youre in the main dialog loop\n")
+  -- do a look command
+  -- while true
+  --   show the prompt
+  --   parse a command
+  -- end
+  tell(me, "hp:10/10 st:10/10> ")
   ask()
   return main_dialog(me)
 end
@@ -16,19 +21,33 @@ local function to_number_in_range(a, b, s)
   end
 end
 
+local function create_character_dialog(me)
+  tell(me, "you are about to create a character\n")
+  tell(me, "now what? ")
+  ask()
+  -- create character in database
+  return -- goes back to pick_character_dialog
+end
+
 local function pick_character_dialog(me, chars)
+  tell(me, "Please pick a character:\n")
   for n, char in ipairs(chars) do
     tell(me, string.format("%s. %s\n", n, char.name))
   end
+  tell(me, "C.   create a new character\n")
   tell(me, "\n")
 
-  local n = to_number_in_range(1, #chars, ask())
+  local input = ask()
+  local n = to_number_in_range(1, #chars, input)
 
   if n then
     local char = chars[n]
     me.char = char
     me.creature = db_find_creature(char.creature_id)
     return main_dialog(me)
+  elseif input == 'C' then
+    create_character_dialog(me)
+    return pick_character_dialog(me, db_get_account_chars(me.account))
   else
     tell(me, "wrong, please try again\n\n")
     return pick_character_dialog(me, chars)
@@ -44,6 +63,7 @@ function login_dialog(me)
   password = ask()
 
   if db_check_account_password(username, password) then
+    me.account = username
     chars = db_get_account_chars(username)
     return pick_character_dialog(me, chars)
   else
