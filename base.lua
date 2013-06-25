@@ -23,7 +23,7 @@ local rooms = {
     zone = nil,
     exits = {},
     description = "A blank room with nothing all around.",
-    name = "Dummy room"
+    name = "Dummy Room"
   }
 }
 
@@ -76,4 +76,8 @@ end
 
 function db_find_creature(id)
   return (assert(creatures[id], "creature "..id.." not found"))
+end
+
+function db_find_room(id)
+  return (assert(rooms[id], "room not found"))
 end

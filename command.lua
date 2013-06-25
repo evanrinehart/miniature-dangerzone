@@ -1,11 +1,11 @@
 
 local function blank(s)
-  return not not string.match(s, "%s*")
+  return not not string.match(s, "^%s*$")
 end
 
 local function text(t)
   return function(s0)
-    local s1 = string.match(s0, t.."(.*)")
+    local s1 = string.match(s0, "^"..t.."(.*)")
     if s1 then
       return t, s1
     else
@@ -56,19 +56,28 @@ local function space_then_rest(s0)
   })
 end
 
-local function look(s0)
-  local x, s1 = alternative(s0,{
-    text('look at'),
-    text('look'),
-    text('l')
-  })
+local function word_plus(word, words, s0)
+  local alts = {}
+  for i, w in ipairs(words) do
+    alts[i] = text(w)
+  end
+  local x, s1 = alternative(s0, alts)
   local rest = space_then_rest(s1)
-  return {'look', rest}, ''
+  return {word, rest}, ''
+end
+
+local function look(s0)
+  return word_plus('look', {'look at', 'look', 'l'}, s0)
+end
+
+local function kill(s0)
+  return word_plus('kill', {'kill', 'k'}, s0)
 end
 
 local function command_parser(s0)
   return alternative(s0, {
-    look
+    look,
+    kill
   })
 end
 
