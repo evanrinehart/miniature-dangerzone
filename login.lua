@@ -8,7 +8,7 @@ local function main_dialog(me)
   --   show the prompt
   --   parse a command
   -- end
-  tell(me, "hp:10/10 st:10/10> ")
+  tell(me, "fine/ready> ")
   local message = ask()
   local command = parse_command(message)
   if not command then
