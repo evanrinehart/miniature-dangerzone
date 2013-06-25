@@ -1,22 +1,9 @@
 require('base')
 require('dialog')
-require('command')
 
-local function location_look(loc)
-  local class, id = loc[1], loc[2]
+require('commands/command_table')
+require('commands/parser')
 
-  if class == 'room' then
-    local room = db_find_room(id)
-    return table.concat({
-      room.name,"\n",
-      room.description,"\n"
-    })
-  elseif class == 'bubble' then
-    return "bubble\n"
-  else
-    return "unknown location type\n"
-  end
-end
 
 local function main_dialog(me)
   -- do a look command
@@ -30,16 +17,8 @@ local function main_dialog(me)
   if not command then
     tell(me, "unknown command\n")
     return main_dialog(me)
-  end
-
-  local c, params = command[1], command[2]
-  if c == 'look' then
-    tell(me, location_look(me:location()))
-  elseif c == 'move' then
-  elseif c == 'kill' then
-    tell(me, "kill what?\n")
   else
-    print('unknown command')
+    command_table[command[1]].effect(me, command[2])
   end
 
   return main_dialog(me)
