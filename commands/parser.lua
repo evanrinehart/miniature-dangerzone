@@ -23,3 +23,8 @@ function parse_first_word(word, alts, s)
   end
   return nil
 end
+
+function trim(s0)
+  local s1 = string.gsub(s0, "^%s+", "")
+  return string.gsub(s1, "%s+$", "")
+end

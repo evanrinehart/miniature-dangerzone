@@ -16,7 +16,8 @@ local function main_dialog(me)
   local command = parse_command(message)
   if not command then
     tell(me, "unknown command\n")
-    return main_dialog(me)
+  elseif command[1] == 'error' then
+    tell(me, command[2])
   else
     command_table[command[1]].effect(me, command[2])
   end
