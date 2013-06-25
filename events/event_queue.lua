@@ -1,4 +1,4 @@
-local Queue = require('queue')
+local Queue = require('events/queue')
 
 local function mk_event(time, payload, id)
   return {
