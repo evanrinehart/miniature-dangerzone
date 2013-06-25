@@ -1,9 +1,8 @@
 package.path = package.path .. ""
 
-require('player')
-require('player_table')
-
-require('events')
+require('players/player')
+require('players/player_table')
+require('events/event_queue')
 
 function connect_signal(fd, addr)
   print("connect_signal")
