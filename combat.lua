@@ -40,11 +40,12 @@ local function compare_fight(f1, f2)
 end
 
 
-local function mk_fight(attacker, defender)
+local function mk_fight(attacker, defender, two_sided)
   return {
     attacker = attacker,
     defender = defender,
     advantage = 'attacker',
+    two_sided = two_sided,
     distance = 2
   }
 end
@@ -76,32 +77,109 @@ local function mk_combat_instance(initial_fights)
   }
 end
 
-local function combat_tell(s, who, you_text, they_text)
-  if who then
-    local from_player = player_for_creature(who)
-  end
-    
+local function combat_tell(s, text)
   for_each_creature_in(s.location, function(creature)
-    local to_player = player_for_creature(creature.id)
-    if to_player then
-      if who and from_player == to_player then
-        tell(to_player, you_text)
+    local watcher = player_for_creature(creature.id)
+    if watcher then
+      tell(watcher, text)
+    end
+  end)
+end
+
+local function combat_tell3(
+  s,
+  from_creature, to_creature,
+  between_them_text, at_you_text, from_you_text
+)
+
+  local from_player = player_for_creature(from_creature.id)
+  local to_player = player_for_creature(to_creature.id)
+
+  for_each_creature_in(s.location, function(creature)
+    local watcher = player_for_creature(creature.id)
+    if watcher then
+      if watcher == from_player then
+        tell(watcher, from_you_text)
+      elseif watcher == to_player then
+        tell(watcher, at_you_text)
       else
-        tell(to_player, they_text)
+        tell(watcher, between_them_text)
       end
     end
   end)
+end
+
+local function get_fighters(fight)
+  if fight.advantage == 'attacker' then
+    return fight.attacker, fight.defender
+  elseif fight.advantage == 'defender' then
+    return fight.defender, fight.attacker
+  else
+    error("fight advantage flag is invalid")
+  end
+end
+
+local function opposite_advantage(a)
+  if a == 'attacker' then return 'defender' end
+  if a == 'defender' then return 'attacker' end
+  error("invalid advantage code")
+end
+
+local function lose_advantage(fight, us, them)
+  fight.advantage = opposite_advantage(fight.advantage)
+  them.advantage_points = d6()
+end
+
+local function play_fight(s, fight, us, them)
+  -- heart of darkness
+  combat_tell3(s, us, them,
+    "someone does something to someone!\n",
+    "someone does something to you!\n",
+    "you do something to someone!\n"
+  )
+
+  if d6() == 1 and d6() < 6 then
+    return 'ended'
+  end
+
+  us.advantage_points = us.advantage_points - 1
+  if us.advantage_points == 0 then
+    return 'lost-advantage'
+  else
+    return 'continue'
+  end
 end
 
 local function combat_routine(s)
   local event, arg1, arg2 = coroutine.yield()
 
   if event == 'turn' then
-    combat_tell(s, nil, nil, "nothing happens whatsoever\n")
-    -- do a turn
-    -- if fight not over schedule a turn event
-    -- reset s.turn_event_id
-    -- if fight over return
+    local end_these_fights = {}
+    for i, fight in ipairs(s.fights) do
+      local points
+      local us, them = get_fighters(fight)
+      local result = play_fight(s, fight, us, them)
+
+      if result == 'ended' then
+        table.insert(end_these_fights, i)
+      elseif result == 'lost-advantage' then
+        lose_advantage(fight, us, them)
+      elseif result == 'continue' then
+        -- do nothing
+      else
+        error("invalid fight result")
+      end
+
+    end
+
+    for _, i in ipairs(end_these_fights) do
+      table.remove(s.fights, i)
+    end
+
+    if #(s.fights) == 0 then -- battle is over
+      combat_tell(s, "combat has ended!\n")
+      return
+    end
   elseif event == 'command' then
     -- if player not already in combat, insert him
     -- interpret the command
@@ -124,7 +202,8 @@ end
 combat_instance_table = {}
 
 function start_combat(attacker, defender)
-  local initial_fights = {mk_fight(attacker, defender)}
+  attacker.advantage_points = d6()
+  local initial_fights = {mk_fight(attacker, defender, true)}
   local s = mk_combat_instance(initial_fights)  
   local co = coroutine.create(combat_routine)
   s.co = co
@@ -141,16 +220,16 @@ function start_combat(attacker, defender)
     if ok then
       if coroutine.status(co) == 'suspended' then
         schedule_event(now+1, combat_event)
-      elseif coroutine.status == 'dead' then
+      elseif coroutine.status(co) == 'dead' then
         -- do nothing
       else
-        error("combat coroutine in anomalous status: " .. coroutine.status(co))
+        error("combat coroutine in anomalous status: " .. coroutine.status(co) .. "\n")
       end
     else
-      print("combat coroutine has crashed:")
-      print(msg)
-
       for _, player in pairs(s.players) do
+        tell(player, "combat coroutine has crashed:\n")
+        tell(player, msg)
+        tell(player, "\n")
         player.in_combat = false
       end
       combat_instance_table[s.location] = nil

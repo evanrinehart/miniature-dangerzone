@@ -5,34 +5,22 @@ require('players/player_table')
 require('events/event_queue')
 
 function connect_signal(fd, addr)
-  print("connect_signal")
-  print(fd)
-  print(addr)
-
   player = mk_player(fd, addr)
   register_player(player)
-debug_player_table()
   player:boot()
 end
 
 function control_signal(fd, text)
-  print("control_signal")
-
   player = lookup_player(fd)
   assert(player, "control_signal: unable to find player fd="..fd)
-print("control", fd, text)
   player:take_input(text)
 end
 
 function disconnect_signal(fd)
-  print("disconnect_signal")
-  print(fd)
-
   -- notify things before
   clear_player(fd)
   -- notify things after ?
   --
-debug_player_table()
 end
 
 function wake_signal(now)

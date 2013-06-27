@@ -37,6 +37,7 @@ local creatures = {
     form = {},
     name = 'barfos',
     location = mk_room_ref(1),
+    advantage = 0,
     actions = {
       std.punch(),
       std.punch(),
@@ -50,6 +51,7 @@ local creatures = {
     form = {},
     name = 'dummy',
     location = mk_room_ref(1),
+    advantage = 0,
     actions = {
       std.punch(),
       std.punch(),
@@ -67,6 +69,13 @@ local characters = {
     account = 'barfos',
     status = nil,
     creature_id = 1
+  },
+  [2] = {
+    id = 2,
+    name = 'dummy',
+    account = 'barfos',
+    status = nil,
+    creature_id = 2
   }
 }
 
@@ -78,7 +87,7 @@ local accounts = {
 }
 
 local characters_in_account = {
-  barfos = {1}
+  barfos = {1, 2}
 }
 
 local creatures_in_things_index = {
