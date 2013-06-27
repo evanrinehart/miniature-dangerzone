@@ -121,3 +121,16 @@ function for_each_creature_in(loc, f)
     f(db_find_creature(id))
   end
 end
+
+function db_lookup_location(loc)
+  local kind, id = loc[1], loc[2]
+  local thing
+
+  if kind == 'room' then thing = db_lookup_room(id)
+  elseif kind == 'bubble' then thing = db_lookup_bubble(id)
+  elseif kind == 'creature' then thing = db_lookup_creature(id)
+  else error('invalid location type '..tostring(kind))
+  end
+
+  return kind, thing
+end
