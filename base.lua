@@ -16,6 +16,8 @@
 -- indexes
 -- account -> characters
 
+require('things')
+
 
 local rooms = {
   [1] = {
@@ -34,7 +36,7 @@ local creatures = {
     id = 1,
     form = {},
     name = 'barfos',
-    location = {'room', 1},
+    location = mk_room_ref(1),
     actions = {
       std.punch(),
       std.punch(),
@@ -47,7 +49,7 @@ local creatures = {
     id = 2,
     form = {},
     name = 'dummy',
-    location = {'room', 1},
+    location = mk_room_ref(1),
     actions = {
       std.punch(),
       std.punch(),
@@ -79,7 +81,8 @@ local characters_in_account = {
   barfos = {1}
 }
 
-local things_in_things_index = {
+local creatures_in_things_index = {
+  ["room:1"] = {1, 2}
 }
 
 local function use_index(index, target, key)
@@ -109,4 +112,12 @@ end
 
 function db_dummy_creature()
   return creatures[2]
+end
+
+function for_each_creature_in(loc, f)
+  local sref = show_thing_ref(loc)
+  local creature_ids = creatures_in_things_index[sref]
+  for i, id in ipairs(creature_ids) do
+    f(db_find_creature(id))
+  end
 end

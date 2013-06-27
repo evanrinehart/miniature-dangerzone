@@ -76,11 +76,28 @@ local function mk_combat_instance(initial_fights)
   }
 end
 
+local function combat_tell(s, who, you_text, they_text)
+  if who then
+    local from_player = player_for_creature(who)
+  end
+    
+  for_each_creature_in(s.location, function(creature)
+    local to_player = player_for_creature(creature.id)
+    if to_player then
+      if who and from_player == to_player then
+        tell(to_player, you_text)
+      else
+        tell(to_player, they_text)
+      end
+    end
+  end)
+end
+
 local function combat_routine(s)
   local event, arg1, arg2 = coroutine.yield()
 
   if event == 'turn' then
-    print("a turn!")
+    combat_tell(s, nil, nil, "nothing happens whatsoever\n")
     -- do a turn
     -- if fight not over schedule a turn event
     -- reset s.turn_event_id
