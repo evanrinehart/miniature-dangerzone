@@ -1,4 +1,5 @@
 local the_player_table = {}
+local creature_lookup = {}
 
 function debug_player_table()
   if next(the_player_table) == nil then
@@ -17,12 +18,25 @@ function register_player(player)
   the_player_table[fd] = player
 end
 
+function register_creature(player, creature)
+  creature_lookup[creature.id] = player
+end
+
 function clear_player(fd)
+  assert(the_player_table[fd], "attempt to clear player, but not found here")
+  local player = the_player_table[fd]
   the_player_table[fd] = nil
+  if player.creature then
+    creature_lookup[player.creature.id] = nil
+  end
 end
 
 function lookup_player(fd)
   return (assert(the_player_table[fd], "player anomalously not found"))
+end
+
+function player_for_creature(creature_id)
+  return creature_lookup[creature_id]
 end
 
 function lookup_player_maybe(fd)

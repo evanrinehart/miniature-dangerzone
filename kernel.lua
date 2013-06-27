@@ -37,7 +37,8 @@ end
 
 function wake_signal(now)
   the_event_queue.each_ready_event(now, function(e)
-    print("an event happened?!")
+    local f = e.data
+    f(e.time)
   end)
 
   local next_time = the_event_queue.next_time()

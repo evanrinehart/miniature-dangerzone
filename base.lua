@@ -27,12 +27,34 @@ local rooms = {
   }
 }
 
+local std = require('actions')
+
 local creatures = {
   [1] = {
     id = 1,
     form = {},
-    names = {'creature'},
-    location = {'room', 1}
+    name = 'barfos',
+    location = {'room', 1},
+    actions = {
+      std.punch(),
+      std.punch(),
+      std.block(),
+      std.recover(),
+      std.counter()
+    }
+  },
+  [2] = {
+    id = 2,
+    form = {},
+    name = 'dummy',
+    location = {'room', 1},
+    actions = {
+      std.punch(),
+      std.punch(),
+      std.block(),
+      std.recover(),
+      std.counter()
+    }
   }
 }
 
@@ -55,6 +77,9 @@ local accounts = {
 
 local characters_in_account = {
   barfos = {1}
+}
+
+local things_in_things_index = {
 }
 
 local function use_index(index, target, key)
@@ -80,4 +105,8 @@ end
 
 function db_find_room(id)
   return (assert(rooms[id], "room not found"))
+end
+
+function db_dummy_creature()
+  return creatures[2]
 end

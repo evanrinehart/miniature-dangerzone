@@ -40,7 +40,8 @@ function mk_player(fd, addr)
 
     boot = boot,
     take_input = take_input,
-    location = location
+    location = location,
+    in_combat = false
   }
 end
 

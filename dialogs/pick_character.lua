@@ -25,6 +25,7 @@ function pick_character_dialog(me, chars)
     local char = chars[n]
     me.char = char
     me.creature = db_find_creature(char.creature_id)
+    register_creature(me, me.creature)
     return main_dialog(me)
   elseif input == 'C' then
     create_character_dialog(me)

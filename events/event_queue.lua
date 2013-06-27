@@ -42,9 +42,11 @@ local function each_ready_event(now, f)
 end
 
 local function schedule(data, time)
-  local e = mk_event(time, data, id)
-  id = id + 1
+  local my_id = id_counter
+  local e = mk_event(time, data, my_id)
+  id_counter = id_counter + 1
   queue.insert(e)
+  return my_id
 end
 
 local function debug()
@@ -57,3 +59,7 @@ the_event_queue = {
   schedule = schedule,
   debug = debug
 }
+
+function schedule_event(when, f)
+  return schedule(f, when)
+end

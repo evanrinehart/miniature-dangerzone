@@ -6,6 +6,7 @@ local function location_look(loc)
     return table.concat({
       room.name,"\n",
       room.description,"\n"
+      
     })
   elseif class == 'bubble' then
     return "bubble\n"
