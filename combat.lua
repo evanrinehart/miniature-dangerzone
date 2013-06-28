@@ -133,9 +133,9 @@ end
 local function play_fight(s, fight, us, them)
   -- heart of darkness
   combat_tell3(s, us, them,
-    "someone does something to someone!\n",
-    "someone does something to you!\n",
-    "you do something to someone!\n"
+    "someone does something to someone!",
+    "someone does something to you!",
+    "you do something to someone!"
   )
 
   if d6() == 1 and d6() < 6 then
@@ -177,7 +177,7 @@ local function combat_routine(s)
     end
 
     if #(s.fights) == 0 then -- battle is over
-      combat_tell(s, "combat has ended!\n")
+      combat_tell(s, "combat has ended!")
       return
     end
   elseif event == 'command' then
@@ -227,9 +227,8 @@ function start_combat(attacker, defender)
       end
     else
       for _, player in pairs(s.players) do
-        tell(player, "combat coroutine has crashed:\n")
+        tell(player, "combat coroutine has crashed:")
         tell(player, msg)
-        tell(player, "\n")
         player.in_combat = false
       end
       combat_instance_table[s.location] = nil

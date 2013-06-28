@@ -14,7 +14,7 @@ local dirs = {
 }
 
 local function move(me, where)
-  tell(me, "not yet\n")
+  tell(me, "not yet")
 end
 
 local function parser(s0)
@@ -27,7 +27,7 @@ local function parser(s0)
     if d2 then
       return {'move', d2}
     else
-      return {'error', "move which way? (nsewup)\n"}
+      return {'error', "move which way? (nsewup)"}
     end
   elseif d1 then
     return {'move', d1}
