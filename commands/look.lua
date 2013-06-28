@@ -1,24 +1,25 @@
-local function location_look(loc)
+require('util/misc')
+
+local function location_look(loc, buf)
   local class, id = loc[1], loc[2]
 
   if class == 'room' then
     local room = db_find_room(id)
-    return table.concat({
-      room.name,"\n",
-      room.description,"\n"
-      
-    })
+    push(buf, {'yellow', room.name})
+    push(buf, room.description)
+
+    for_each_creature_in(loc, function(c)
+      push(buf, {'green', c.name .. " is here."})
+    end)
   elseif class == 'bubble' then
-    return "bubble\n"
   else
-    return "unknown location type\n"
   end
 end
 
-local function look(me, target)
-  --
-  -- if target is blank
-  tell(me, location_look(me:location()))
+local function look(my, target)
+  local buf = {}
+  location_look(my:location(), buf)
+  tell(my, buf)
 end
 
 local function parser(s)

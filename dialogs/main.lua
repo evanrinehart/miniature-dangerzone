@@ -7,11 +7,11 @@ function main_dialog(me)
   --   show the prompt
   --   parse a command
   -- end
-  tell(me, "fine/ready> ")
+  tell_nonl(me, "fine/ready> ")
   local message = ask()
   local command = parse_command(message)
   if not command then
-    tell(me, "unknown command\n")
+    tell(me, "unknown command")
   elseif command[1] == 'error' then
     tell(me, command[2])
   else

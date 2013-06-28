@@ -1,6 +1,6 @@
-require('dialogs/dialog')
+require('dialog')
 require('dialogs/login')
-require('stream')
+require('util/stream')
 
 local function take_input(self, input)
   local message = self.input_buffer(input)

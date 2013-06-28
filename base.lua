@@ -16,8 +16,7 @@
 -- indexes
 -- account -> characters
 
-require('things')
-
+require('util/set')
 
 local rooms = {
   [1] = {
@@ -26,6 +25,13 @@ local rooms = {
     exits = {},
     description = "A blank room with nothing all around.",
     name = "Dummy Room"
+  },
+  [2] = {
+    id = 2,
+    zone = nil,
+    exits = {},
+    name = "The Other Room",
+    description = "This is the room besides the dummy room."
   }
 }
 
@@ -36,7 +42,7 @@ local creatures = {
     id = 1,
     form = {},
     name = 'barfos',
-    location = mk_room_ref(1),
+    location = {'room', 1},
     advantage = 0,
     actions = {
       std.punch(),
@@ -50,7 +56,7 @@ local creatures = {
     id = 2,
     form = {},
     name = 'dummy',
-    location = mk_room_ref(1),
+    location = {'room', 1},
     advantage = 0,
     actions = {
       std.punch(),
@@ -87,17 +93,24 @@ local accounts = {
 }
 
 local characters_in_account = {
-  barfos = {1, 2}
+  barfos = mk_set({1, 2})
 }
 
 local creatures_in_things_index = {
-  ["room:1"] = {1, 2}
+  ["room:1"] = mk_set({1, 2}),
+  ["room:2"] = mk_set({})
 }
+
+function show_thing_ref(ref)
+  return ref[1]..':'..ref[2]
+end
 
 local function use_index(index, target, key)
   local results = {}
-  for k, v in ipairs(index[key]) do
-    results[k] = target[v]
+  local i = 1
+  for id in pairs(index[key]) do
+    results[i] = target[id]
+    i = i + 1
   end
   return results
 end
@@ -125,8 +138,8 @@ end
 
 function for_each_creature_in(loc, f)
   local sref = show_thing_ref(loc)
-  local creature_ids = creatures_in_things_index[sref]
-  for i, id in ipairs(creature_ids) do
+  local creature_ids_set = creatures_in_things_index[sref]
+  for id in pairs(creature_ids_set) do
     f(db_find_creature(id))
   end
 end
@@ -142,4 +155,12 @@ function db_lookup_location(loc)
   end
 
   return kind, thing
+end
+
+function db_move_creature_to(creature, loc)
+  local prev = creature.location
+  local cid = creature.id
+  creatures_in_things_index[show_thing_ref(prev)][cid] = nil
+  creatures_in_things_index[show_thing_ref(loc)][cid] = true
+  creature.location = loc
 end

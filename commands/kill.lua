@@ -1,5 +1,5 @@
 require('combat')
-require('dice')
+require('util/dice')
 
 local function target_match(me, s)
   return {'creature', db_dummy_creature()}
