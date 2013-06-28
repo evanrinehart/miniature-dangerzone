@@ -18,7 +18,7 @@ end
 
 local function look(my, target)
   local buf = {}
-  location_look(my:location(), buf)
+  location_look(my:location_ref(), buf)
   tell(my, buf)
 end
 

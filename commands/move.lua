@@ -6,15 +6,36 @@ local dirs = {
   n = 'n',
   north = 'n',
   s = 's',
-  south = 'south',
+  south = 's',
   u = 'u',
   up = 'u',
   d = 'd',
   down = 'd'
 }
 
+local dir_names = {
+  e = 'east',
+  w = 'west',
+  u = 'up',
+  d = 'down',
+  n = 'north',
+  s = 'south'
+}
+
 local function move(me, where)
-  tell(me, "not yet")
+  local kind, place = me:location()
+  if kind == 'room' then
+    local dest = place.exits[where]
+    if dest then
+      db_move_creature_to(me.creature, dest)
+      tell(me, "you move "..dir_names[where])
+      command_table.look.effect(me, '') -- need function for this
+    else
+      tell(me, "there is no way")
+    end
+  else
+    tell(me, "hmm..")
+  end
 end
 
 local function parser(s0)

@@ -22,14 +22,18 @@ local rooms = {
   [1] = {
     id = 1,
     zone = nil,
-    exits = {},
+    exits = {
+      e = {'room', 2}
+    },
     description = "A blank room with nothing all around.",
     name = "Dummy Room"
   },
   [2] = {
     id = 2,
     zone = nil,
-    exits = {},
+    exits = {
+      w = {'room', 1}
+    },
     name = "The Other Room",
     description = "This is the room besides the dummy room."
   }
@@ -148,9 +152,9 @@ function db_lookup_location(loc)
   local kind, id = loc[1], loc[2]
   local thing
 
-  if kind == 'room' then thing = db_lookup_room(id)
-  elseif kind == 'bubble' then thing = db_lookup_bubble(id)
-  elseif kind == 'creature' then thing = db_lookup_creature(id)
+  if kind == 'room' then thing = db_find_room(id)
+  elseif kind == 'bubble' then thing = db_find_bubble(id)
+  elseif kind == 'creature' then thing = db_find_creature(id)
   else error('invalid location type '..tostring(kind))
   end
 
