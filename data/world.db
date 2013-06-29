@@ -6,9 +6,3 @@ write accounts 1 username=barfos&password=6721581a6e9d2483d43a50914b30633adbaba7
 write creatures 1 name=barfos&location=room:2&form=
 write creatures 2 name=dummy&location=room:2&form=
 commit
-write creatures 1 location=room:1
-commit
-write creatures 1 location=room:2
-commit
-write creatures 1 location=room:1
-commit

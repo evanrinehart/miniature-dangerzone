@@ -14,6 +14,7 @@ function main_dialog(me)
     tell(me, "unknown command")
   elseif command[1] == 'error' then
     tell(me, command[2])
+    db_rollback()
   else
     command_table[command[1]].effect(me, command[2])
   end

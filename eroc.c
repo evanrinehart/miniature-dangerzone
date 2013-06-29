@@ -65,7 +65,7 @@ int c_log(lua_State* L){ /* text */
   }
   else{
     text = lua_tostring(L, -1);
-    write_log("%s", text);
+    write_log("%s\n", text);
   }
 
   return 0;

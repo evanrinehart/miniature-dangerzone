@@ -50,7 +50,7 @@ local function parser(s0)
     if d2 then
       return {'move', d2}
     else
-      return {'error', "move which way? (nsewup)"}
+      return {'error', "move which way? (nsewud)"}
     end
   elseif d1 then
     return {'move', d1}

@@ -461,35 +461,8 @@ end
 
 --- maintenance ---
 
-function db_begin(working_file)
-  database_log_file_path = working_file
-  local ok, result = pcall(load_database_from_log, working_file)
-
-  if ok then
-    if result == 'incomplete' then
-      c_log("o_O recovering from partial writes to database\n")
-      db_rollback()
-      checkpoint()
-    else
-      assert(result == 'ok', "return value of load_database_from_log")
-    end
-
-    c_log("database loaded\n")
-    c_log("rebuilding indexes...\n")
-    rebuild_indexes()
-    c_log("indexes done\n")
-    database_log_file = io.open(working_file, "a")
-    c_log("database ready!\n")
-debug_indexes()
-print("")
-structs.rooms.debug()
-  else
-    c_log("!!! database corruption detected\n")
-    error(result)
-  end
-end
-
-function checkpoint()
+function db_checkpoint()
+  c_log("checkpoint requested")
   if database_log_file then
     database_log_file:close()
   end
@@ -497,7 +470,34 @@ function checkpoint()
   local latest_filename = n .. ".db"
   local latest_path = "data/old/" .. latest_filename
   dump_database(latest_path)
-  os.execute("cp data/world.db data/paranoid/old-log.db")
-  os.execute("cp " .. latest_path .. " data/world.db")
-  database_log_file = io.open("data/world.db", "a")
+  os.execute("cp " .. database_log_file_path .. " data/paranoid/old-log.db")
+  os.execute("cp " .. latest_path .. " " .. database_log_file_path)
+  database_log_file = io.open(database_log_file_path, "a")
+  c_log("checkpoint complete")
 end
+
+function db_begin(working_file)
+  database_log_file_path = working_file
+  local ok, result = pcall(load_database_from_log, working_file)
+
+  if ok then
+    if result == 'incomplete' then
+      c_log("o_O recovering from partial writes to database")
+      db_rollback()
+      db_checkpoint()
+    else
+      assert(result == 'ok', "return value of load_database_from_log")
+    end
+
+    c_log("database loaded")
+    c_log("rebuilding indexes...")
+    rebuild_indexes()
+    c_log("indexes done")
+    database_log_file = io.open(working_file, "a")
+    c_log("database ready!")
+  else
+    c_log("!!! database corruption detected")
+    error(result)
+  end
+end
+
