@@ -3,7 +3,7 @@
 require('util/set')
 require('util/percent')
 require('util/misc')
-require('util/sha1')
+require('util/password')
 
 local database_log_file = nil
 local database_log_path = nil
@@ -411,11 +411,11 @@ function db_account(username)
   return base.accounts[assert(indexes.usernames[username])]
 end
 
-function db_check_account_password(username, password)
+function db_check_account_password(username, password_plain)
   local aid = indexes.usernames[username]
   if aid then
     local acc = base.accounts[aid]
-    return acc and acc.password == password
+    return acc and acc.password == secure_password(password_plain)
   else
     return false
   end
