@@ -222,14 +222,14 @@ local function read_data(tname, id, raw, line_number)
   for fields, value in data_iter(raw) do
     for i, entry in ipairs(struct) do
       if entry[1] == fields[1] then
+        decoded_value = entry[3](value)
+        assert(
+          decoded_value ~= nil,
+          "invalid value for "..fields[1].." on "..line_number
+        )
         if #fields == 1 then
-          thing[fields[1]] = entry[3](value)
+          thing[fields[1]] = decoded_value
         elseif #fields == 2 then
-          decoded_value = entry[3](value)
-          assert(
-            decoded_value ~= nil,
-            "invalid value for "..fields[1].." on "..line_number
-          )
           thing[fields[1]][fields[2]] = decoded_value
         else
           error("load: too deep field name on " .. line_number)
