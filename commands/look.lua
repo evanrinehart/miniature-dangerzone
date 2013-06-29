@@ -11,6 +11,10 @@ local function location_look(loc, buf)
     for cr in db_creatures_iter(loc) do
       push(buf, {'green', cr.name .. " is here."})
     end
+
+    for item in db_item_iter(loc) do
+      push(buf, {'bright-black', item.name, " is here."})
+    end
   end
 end
 

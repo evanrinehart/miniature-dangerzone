@@ -1,8 +1,14 @@
 local function target_search(loc, text)
-  local pattern = string.match(text, "%S+")
+  local pattern = trim(text)
 
-  if pattern == nil then
+  if pattern == '' then
     return nil
+  end
+
+  for item in db_item_iter(loc) do
+    if pattern == item.name then
+      return 'item', item
+    end
   end
 
   for cr in db_creatures_iter(loc) do
@@ -15,12 +21,14 @@ local function target_search(loc, text)
 end
 
 local function get(me, text)
-  local kind, target = target_search(me:location(), text)
+  local kind, thing = target_search(me:location(), text)
   if kind then
     if kind == 'creature' then
-      tell(me, "don't try to get "..target.name)
+      tell(me, "don't try to get "..thing.name)
     elseif kind == 'item' then
-      --
+      db_move_item_to(thing, mk_ref('creature', me.creature.id))
+      db_commit()
+      tell(me, "taken")
     else
       tell(me, "better not")
     end

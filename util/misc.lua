@@ -18,6 +18,11 @@ function mk_ref(x, y)
   return x .. ':' .. y
 end
 
+function trim(s0)
+  local s1 = string.gsub(s0, "^%s+", "")
+  return string.gsub(s1, "%s+$", "")
+end
+
 function split_ref(ref)
   local kind, id = string.match(ref, "([^:]+):(%d+)")
   return kind, tonumber(id)

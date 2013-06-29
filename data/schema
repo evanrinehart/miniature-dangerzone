@@ -47,3 +47,5 @@ items
 === indexes ===
 account -> characters
 thing   -> creatures
+thing   -> items
+usernames -> account

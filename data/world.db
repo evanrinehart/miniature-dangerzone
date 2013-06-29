@@ -1,8 +1,13 @@
+write items 1 name=a%20dagger&location=creature:1&class=dagger
+write items 2 name=a%20lantern&location=room:1&class=lantern
+write items 3 name=an%20empty%20bottle&location=room:1&class=bottle
+write items 4 name=a%20small%20bag&location=room:1&class=small_bag
+write items 5 name=a%20lead%20pipe&location=room:1&class=lead_pipe
 write characters 1 name=barfos&account=1&creature=1
 write characters 2 name=dummy&account=1&creature=2
 write rooms 1 zone=&exits.e=room:2&description=A%20blank%20room%20with%20nothing%20all%20around.&name=Dummy%20Room
 write rooms 2 zone=&exits.w=room:1&description=This%20is%20the%20room%20besides%20the%20dummy%20room.&name=The%20Other%20Room
 write accounts 1 username=barfos&password=6721581a6e9d2483d43a50914b30633adbaba780
-write creatures 1 name=barfos&location=room:2&form=
+write creatures 1 name=barfos&location=room:1&form=
 write creatures 2 name=dummy&location=room:2&form=
 commit

@@ -51,7 +51,8 @@ end
 local index_rebuild = {
   characters_in_account = index_on('characters', 'account', identity),
   creatures_in_things = index_on('creatures', 'location', identity),
-  usernames = unique_index_on('accounts', 'username', identity)
+  usernames = unique_index_on('accounts', 'username', identity),
+  items_in_things = index_on('items', 'location', identity)
 }
 
 local indexes = {}
@@ -162,6 +163,11 @@ local structs = {
     {'name',      '', percent_decode},
     {'account',  nil, tonumber},
     {'creature', nil, tonumber}
+  },
+  items = {
+    {'name',     '',  percent_decode},
+    {'class',    '',  percent_decode},
+    {'location', nil, identity}
   }
 }
 
@@ -344,6 +350,15 @@ local serializers = {
       "account=", char.account, '&',
       "creature=", char.creature, "\n"
     )
+  end,
+
+  items = function(item)
+    db_write(
+      "write items ", item.id, " ",
+      "name=", percent_encode(item.name), '&',
+      "location=", item.location, '&',
+      "class=", item.class, "\n"
+    )
   end
 }
 
@@ -413,6 +428,10 @@ function db_creatures_iter(loc)
   return index_iter('creatures_in_things', loc, 'creatures')
 end
 
+function db_item_iter(loc)
+  return index_iter('items_in_things', loc, 'items')
+end
+
 function db_account(username)
   return base.accounts[assert(indexes.usernames[username])]
 end
@@ -452,6 +471,17 @@ function db_move_creature_to(creature, loc)
     write_index('creatures_in_things', loc, cid)
     creature.location = loc
     db_write("write creatures ", cid, ' ', "location=", loc, "\n")
+  end)
+end
+
+function db_move_item_to(item, loc)
+  enqueue_mod(function()
+    local prev = item.location
+    local id = item.id
+    clear_index('items_in_things', prev, id)
+    write_index('items_in_things', loc, id)
+    item.location = loc
+    db_write("write items ", id, ' ', "location=", loc, "\n")
   end)
 end
 
@@ -495,6 +525,8 @@ function db_begin(working_file)
     c_log("indexes done")
     database_log_file = io.open(working_file, "a")
     c_log("database ready!")
+
+debug_indexes()
   else
     c_log("!!! database corruption detected")
     error(result)
