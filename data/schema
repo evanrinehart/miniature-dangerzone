@@ -1,0 +1,49 @@
+rooms      (id, zone, exits, description, name)
+bubbles    (id, contents, description, location)
+creatures  (id, form, names, location)
+characters (id, names, account, status, creature)
+accounts   (username, password, disabled)
+items      (id, class, properties, location)
+cities     (id, location, size, names, status)
+countries  (id, name, capital, ruler, status, lingo)
+world      (coord, terrain, status, country, special)
+structures (id, location, portal)
+history    (seq, date, description)
+zones      (id, author, description)
+
+=== tables ===
+rooms
+  id
+  name
+  description
+  exits        d->ref
+  zone         ?
+
+creatures
+  id
+  name
+  location  ref
+  form      ?
+
+accounts
+  username
+  password
+  disabled
+
+characters
+  id
+  account
+  name
+  creature  id
+  status    ?
+
+items
+  id
+  class     item_class
+  location  ref
+  attrs     k->v
+  
+
+=== indexes ===
+account -> characters
+thing   -> creatures

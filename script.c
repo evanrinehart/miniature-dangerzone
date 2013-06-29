@@ -25,6 +25,7 @@ void lua_init(){
   lua_register(L, "c_checkpoint", c_checkpoint);
   lua_register(L, "c_poweroff", c_poweroff);
   lua_register(L, "c_clock", c_clock);
+  lua_register(L, "c_dir", c_dir);
 
   error = luaL_dofile(L, "kernel.lua");
   if(error){
@@ -110,6 +111,17 @@ void control_signal(int fd, const char* text){
   lua_pushinteger(L, fd);
   lua_pushstring(L, text);
   error = lua_pcall(L, 2, 0, 0);
+  if(error){
+    fprintf(stderr, "%s\n", lua_tostring(L, -1));
+    lua_pop(L, 1);
+    exit(EXIT_FAILURE);
+  }
+}
+
+void boot_signal(){
+  int error;
+  lua_getglobal(L, "boot_signal");
+  error = lua_pcall(L, 0, 0, 0);
   if(error){
     fprintf(stderr, "%s\n", lua_tostring(L, -1));
     lua_pop(L, 1);

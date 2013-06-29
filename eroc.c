@@ -1,6 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <signal.h>
+#include <string.h>
+#include <dirent.h>
+#include <errno.h>
 
 #include <lua.h>
 
@@ -105,3 +108,62 @@ int c_send(lua_State* L){ /* fd, data */
   return 0;
 }
 
+int c_dir(lua_State* L){ /* path */
+  DIR* dirp;
+  struct dirent* dep;
+  const char* path;
+  int i = 1;
+  int argc = lua_gettop(L);
+
+  if(argc == 0){
+    fprintf(stderr, "c_dir used with no argument\n");
+    return 0;
+  }
+
+  if(!lua_isstring(L, -1)){
+    fprintf(
+      stderr,
+      "c_dir used with unexpected type (%s)\n",
+      lua_typename(L, lua_type(L, -1))
+    );
+    return 0;
+  }
+
+  path = lua_tostring(L, -1);
+
+  dirp = opendir(path);
+  if(dirp == NULL){
+    perror("opendir");
+    exit(EXIT_FAILURE);
+  }
+
+  lua_newtable(L);
+
+  for(;;){
+    errno = 0;
+    dep = readdir(dirp);
+
+    if(dep == NULL && errno != 0){
+      perror("readdir");
+      exit(EXIT_FAILURE);
+    }
+    else if(dep != NULL){
+      if(strcmp(dep->d_name,".") && strcmp(dep->d_name,"..")){
+        lua_pushinteger(L, i);
+        lua_pushstring(L, dep->d_name);
+        lua_settable(L, -3);
+        i++;
+      }
+    }
+    else{
+      break;
+    }
+  }
+
+  if(closedir(dirp) == -1){
+    perror("closedir");
+    exit(EXIT_FAILURE);
+  }
+
+  return 1;
+}

@@ -4,6 +4,10 @@ require('players/player')
 require('players/player_table')
 require('events/event_queue')
 
+function boot_signal()
+  db_begin("data/world.db")
+end
+
 function connect_signal(fd, addr)
   player = mk_player(fd, addr)
   register_player(player)

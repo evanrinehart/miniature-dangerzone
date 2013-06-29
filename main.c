@@ -16,7 +16,8 @@ int main(int argc, char* argv[]){
 
   lua_init();
   listen_on(4321);
-  core_loop();
+  boot_signal();
+  core_loop(); /* never returns */
   return 0;
 }
 
