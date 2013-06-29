@@ -346,6 +346,10 @@ function db_commit()
   db_write("commit\n")
 end
 
+function db_rollback()
+  modification_queue = {}
+end
+
 
 
 
