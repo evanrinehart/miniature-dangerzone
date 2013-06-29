@@ -1,5 +1,5 @@
 function percent_encode(s)
-  return string.gsub(s, "[^A-Za-z0-9]", function(c)
+  return string.gsub(s, "[^A-Za-z0-9:-_~.]", function(c)
     return string.format("%%%02x", string.byte(c,1))
   end)
 end

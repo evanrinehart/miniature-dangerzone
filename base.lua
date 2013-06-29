@@ -34,7 +34,7 @@ end
 
 local index_rebuild = {
   characters_in_account = index_on('characters', 'account', identity),
-  creatures_in_things = index_on('creatures', 'location', show_ref)
+  creatures_in_things = index_on('creatures', 'location', identity)
 }
 
 local indexes = {}
@@ -79,7 +79,7 @@ local function debug_creatures()
   print('creatures:')
 
   for id, c in pairs(base.creatures) do
-    print(id, c.name, show_ref(c.location))
+    print(id, c.name, c.location)
   end
 end
 
@@ -87,26 +87,17 @@ end
 
 --- deserialization ---
 
-local function decode_ref(raw)
-  local kind, id = string.match(raw, "([^_]+)_(%d+)")
-  if kind and id then
-    return {kind, id}
-  else
-    error("load: decode ref failure")
-  end
-end
-
 -- (name, default, decoder)
 local structs = {
   rooms = {
     {'name',        '', percent_decode},
     {'description', '', percent_decode},
-    {'exits',       {}, decode_ref},
+    {'exits',       {}, identity},
     debug = debug_rooms
   },
   creatures = {
     {'name',     'unnamed', percent_decode},
-    {'location', nil,       decode_ref},
+    {'location', nil,       identity},
     {'form',     nil,       identity},
     debug = debug_creatures
   }
@@ -235,16 +226,12 @@ local function db_write(...)
   end
 end
 
-local function encode_ref(ref)
-  return ref[1] .. "_" .. ref[2]
-end
-
 local function write_room(room)
   db_write("write rooms ")
   db_write(room.id, " ")
   db_write("zone=&")
   for d, ref in pairs(room.exits) do
-    db_write("exits.",d,"=", encode_ref(ref), "&")
+    db_write("exits.",d,"=", ref, "&")
   end
   db_write("description=", percent_encode(room.description), "&")
   db_write("name=", percent_encode(room.name), "\n")
@@ -254,7 +241,7 @@ local function write_creature(c)
   db_write("write creatures ")
   db_write(c.id, " ")
   db_write("name=", percent_encode(c.name), "&")
-  db_write("location=", encode_ref(c.location), "&")
+  db_write("location=", c.location, "&")
   db_write("form=", "\n")
 end
 
@@ -308,15 +295,14 @@ function db_dummy_creature()
 end
 
 function for_each_creature_in(loc, f)
-  local sref = encode_ref(loc)
-  local creature_ids_set = creatures_in_things_index[sref]
+  local creature_ids_set = creatures_in_things_index[loc]
   for id in pairs(creature_ids_set) do
     f(db_find_creature(id))
   end
 end
 
 function db_lookup_location(loc)
-  local kind, id = loc[1], loc[2]
+  local kind, id = split_ref(loc)
   local thing
 
   if kind == 'room' then thing = db_find_room(id)
@@ -330,18 +316,34 @@ end
 
 
 --- data modification ---
+local modification_queue = {}
+
+local function enqueue_mod(action)
+  table.insert(modification_queue, action)
+end
+
+local function execute_all_modifications()
+  for i, action in ipairs(modification_queue) do
+    action()
+  end
+  modification_queue = {}
+end
+
 function db_move_creature_to(creature, loc)
-  local prev = creature.location
-  local cid = creature.id
-  creatures_in_things_index[encode_ref(prev)][cid] = nil
-  creatures_in_things_index[encode_ref(loc )][cid] = true
-  creature.location = loc
+  enqueue_mod(function()
+    local prev = creature.location
+    local cid = creature.id
+    indexes.creatures_in_things[prev][cid] = nil
+    indexes.creatures_in_things[loc][cid] = true
+    creature.location = loc
+    db_write("write creatures ", cid, ' ', "location=", loc, "\n")
+  end)
 end
 
 function db_commit()
   assert(database_log_file, "no database log file")
-  -- for this to help us at runtime, we need to be able to rollback
-  database_log_file.write("commit\n")
+  execute_all_modifications()
+  db_write("commit\n")
 end
 
 

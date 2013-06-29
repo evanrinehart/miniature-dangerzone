@@ -1,7 +1,7 @@
 require('util/misc')
 
 local function location_look(loc, buf)
-  local class, id = loc[1], loc[2]
+  local class, id = split_ref(loc)
 
   if class == 'room' then
     local room = db_find_room(id)

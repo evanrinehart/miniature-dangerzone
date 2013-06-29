@@ -14,6 +14,10 @@ function identity(x)
   return x
 end
 
-function show_ref(ref)
-  return ref[1] .. ':' .. ref[2]
+function mk_ref(x, y)
+  return x .. ':' .. y
+end
+
+function split_ref(ref)
+  return string.match(ref, "([^:]+):(%d+)")
 end
