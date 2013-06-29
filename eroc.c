@@ -50,11 +50,6 @@ int c_kick(lua_State* L){ /* fd */
   return 0;
 }
 
-int c_checkpoint(lua_State* L){
-  // checkpoint the state log
-  return 0;
-}
-
 int c_log(lua_State* L){ /* text */
   const char* text;
 

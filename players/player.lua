@@ -20,16 +20,12 @@ local function boot(self)
   self.dialog = start_dialog(self, login_dialog)
 end
 
-local function location_ref(self)
+local function location(self)
   if self.creature then
     return self.creature.location
   else
     error("do not request location when undefined")
   end
-end
-
-local function location(self)
-  return db_lookup_location(self:location_ref())
 end
 
 function mk_player(fd, addr)
@@ -45,7 +41,6 @@ function mk_player(fd, addr)
     boot = boot,
     take_input = take_input,
     location = location,
-    location_ref = location_ref,
     in_combat = false
   }
 end

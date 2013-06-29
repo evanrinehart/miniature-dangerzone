@@ -4,21 +4,19 @@ local function location_look(loc, buf)
   local class, id = split_ref(loc)
 
   if class == 'room' then
-    local room = db_find_room(id)
+    local room = db_find('room', id)
     push(buf, {'yellow', room.name})
     push(buf, room.description)
 
-    for_each_creature_in(loc, function(c)
-      push(buf, {'green', c.name .. " is here."})
-    end)
-  elseif class == 'bubble' then
-  else
+    for cr in db_creatures_iter(loc) do
+      push(buf, {'green', cr.name .. " is here."})
+    end
   end
 end
 
 local function look(my, target)
   local buf = {}
-  location_look(my:location_ref(), buf)
+  location_look(my:location(), buf)
   tell(my, buf)
 end
 

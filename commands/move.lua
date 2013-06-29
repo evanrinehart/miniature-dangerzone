@@ -23,11 +23,13 @@ local dir_names = {
 }
 
 local function move(me, where)
-  local kind, place = me:location()
+  local my = me
+  local kind, place = db_ref(my:location())
   if kind == 'room' then
     local dest = place.exits[where]
     if dest then
-      db_move_creature_to(me.creature, dest)
+      db_move_creature_to(my.creature, dest)
+      db_commit()
       tell(me, "you move "..dir_names[where])
       command_table.look.effect(me, '') -- need function for this
     else

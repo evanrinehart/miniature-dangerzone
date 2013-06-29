@@ -1,5 +1,8 @@
-write rooms 1 zone=&exits.e=room_2&description=A%20blank%20room%20with%20nothing%20all%20around%2e&name=Dummy%20Room
-write rooms 2 zone=&exits.w=room_1&description=This%20is%20the%20room%20besides%20the%20dummy%20room%2e&name=The%20Other%20Room
-write creatures 1 name=barfos&location=room_1&form=
-write creatures 2 name=dummy&location=room_1&form=
+write characters 1 name=barfos&account=1&creature=1
+write characters 2 name=dummy&account=1&creature=2
+write rooms 1 zone=&exits.e=room:2&description=A%20blank%20room%20with%20nothing%20all%20around.&name=Dummy%20Room
+write rooms 2 zone=&exits.w=room:1&description=This%20is%20the%20room%20besides%20the%20dummy%20room.&name=The%20Other%20Room
+write accounts 1 username=barfos&password=pass
+write creatures 1 name=barfos&location=room:2&form=
+write creatures 2 name=dummy&location=room:2&form=
 commit

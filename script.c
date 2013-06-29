@@ -22,7 +22,6 @@ void lua_init(){
   lua_register(L, "c_send", c_send);
   lua_register(L, "c_log", c_log);
   lua_register(L, "c_kick", c_kick);
-  lua_register(L, "c_checkpoint", c_checkpoint);
   lua_register(L, "c_poweroff", c_poweroff);
   lua_register(L, "c_clock", c_clock);
   lua_register(L, "c_dir", c_dir);

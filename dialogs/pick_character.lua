@@ -10,10 +10,14 @@ local function to_number_in_range(a, b, s)
   end
 end
 
-function pick_character_dialog(me, chars)
+function pick_character_dialog(me, username)
   tell(me, "Please pick a character:")
-  for n, char in ipairs(chars) do
-    tell(me, string.format("%s. %s", n, char.name))
+  local i = 1
+  local chars = {}
+  for char in db_account_characters_iter(username) do
+    tell(me, string.format("%s. %s", i, char.name))
+    chars[i] = char
+    i = i + 1
   end
   tell(me, "C.   create a new character")
   tell(me, "")
@@ -24,14 +28,14 @@ function pick_character_dialog(me, chars)
   if n then
     local char = chars[n]
     me.char = char
-    me.creature = db_find_creature(char.creature_id)
+    me.creature = db_find('creature', char.creature)
     register_creature(me, me.creature)
     return main_dialog(me)
   elseif input == 'C' then
     create_character_dialog(me)
-    return pick_character_dialog(me, db_get_account_chars(me.account))
+    return pick_character_dialog(me, username)
   else
     tell(me, "wrong, please try again")
-    return pick_character_dialog(me, chars)
+    return pick_character_dialog(me, username)
   end
 end

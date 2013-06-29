@@ -19,5 +19,13 @@ function mk_ref(x, y)
 end
 
 function split_ref(ref)
-  return string.match(ref, "([^:]+):(%d+)")
+  local kind, id = string.match(ref, "([^:]+):(%d+)")
+  return kind, tonumber(id)
+end
+
+function defer(f, ...)
+  local args = {...}
+  return function()
+    return f(unpack(args))
+  end
 end

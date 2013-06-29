@@ -13,9 +13,9 @@ function login_dialog(me)
   password = ask()
 
   if db_check_account_password(username, password) then
-    me.account = username
-    chars = db_get_account_chars(username)
-    return pick_character_dialog(me, chars)
+    local account = db_account(username)
+    me.account = account.id
+    return pick_character_dialog(me, username)
   else
     tell(me, "WRONG")
     disconnect(me)
