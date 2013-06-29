@@ -194,6 +194,7 @@ end
 local function read_data(tname, id, raw, line_number)
   local struct = structs[tname]
   local thing
+  local decoded_value
 
   if struct == nil then
     error("load: unknown tname " .. tostring(tname) .. " on " .. line_number)
@@ -224,7 +225,12 @@ local function read_data(tname, id, raw, line_number)
         if #fields == 1 then
           thing[fields[1]] = entry[3](value)
         elseif #fields == 2 then
-          thing[fields[1]][fields[2]] = entry[3](value)
+          decoded_value = entry[3](value)
+          assert(
+            decoded_value ~= nil,
+            "invalid value for "..fields[1].." on "..line_number
+          )
+          thing[fields[1]][fields[2]] = decoded_value
         else
           error("load: too deep field name on " .. line_number)
         end
