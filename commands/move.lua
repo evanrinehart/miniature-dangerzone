@@ -22,6 +22,26 @@ local dir_names = {
   s = 'south'
 }
 
+local function do_command(me, text)
+  local status, command, args = parse_command(me, text)
+
+  if status == 'unknown' then
+    tell(me, "unknown command")
+  elseif status == 'usage' then
+    tell(me, "usage: " .. command.usage)
+  elseif status == 'match' then
+    local ok, err = pcall(command.effect, me, args)
+    if ok then
+      -- do nothing
+    else
+      tell(me, err)
+      db_rollback()
+    end
+  else
+    error("parse_command return value "..tostring(status))
+  end
+end
+
 local function move(me, args)
   local my = me
   local kind, place = db_ref(my:location())
@@ -44,7 +64,7 @@ local function move(me, args)
       db_move_creature_to(me.creature, dest)
       db_commit()
       tell(me, "you move "..dir_names[dir])
-      command_table.look.effect(me) -- need function for this
+      do_command(me, "look")
     else
       tell(me, "there is no way")
     end
