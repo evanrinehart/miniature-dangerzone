@@ -1,6 +1,6 @@
 require('util/misc')
 
-local function location_look(loc, args)
+local function location_look(loc, args, buf)
   local class, id = split_ref(loc)
 
   if class == 'room' then
@@ -20,8 +20,8 @@ end
 
 local function look(me, args)
   local buf = {}
---  location_look(me:location(), buf)
---  tell(me, buf)
+  location_look(me:location(), args, buf)
+  tell(me, buf)
 end
 
 return {
