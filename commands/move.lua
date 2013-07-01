@@ -27,15 +27,9 @@ local function move(me, args)
   local kind, place = db_ref(my:location())
   local dir
 
--- parser is returning cases where you have vx and x is ''
--- it should pick v instead otherwise vx '' == "usage"
-
-print("arg1", type(args.arg1), #args.arg1)
   if args.arg1 then
-print("ok")
     dir = dirs[args.arg1]
   else
-print("command: ", args.command)
     dir = dirs[args.command]
   end
 
