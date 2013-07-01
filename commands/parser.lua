@@ -1,12 +1,13 @@
 require('commands/command_table')
 
 local function item_match(item, text)
-  if item.name == text then
+  local item_class = item:class()
+  assert(item_class, "invalid item class ", item.class_name)
+
+  if item_class.single == text then
     return true
   else
-    local class = item_class_table[item.class]
-    assert(class, "invalid item class ", item.class)
-    for i, a in ipairs(class.aliases) do
+    for i, a in ipairs(item_class.aliases) do
       if a == text then
         return true
       end
@@ -36,7 +37,8 @@ local function command_search(me, text)
     players = {},
     players_here = {},
     decorations = {},
-    selection = nil -- like {'item', 34}
+    selection = nil, -- like 'thing #3'
+    all = false -- like 'all things'
   }
 
   local here = me:location()

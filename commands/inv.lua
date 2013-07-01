@@ -8,7 +8,7 @@ local function inv(me)
   if next(items) then
     tell(me, "You are carrying:")
     for i, item in ipairs(items) do
-      tell(me, item.name)
+      tell(me, item:class().single)
     end
   else
     tell(me, "you have nothing")

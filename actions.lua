@@ -14,7 +14,7 @@ return {
   block = mk_action('block', 'block', 'blocks'),
   dodge = mk_action('dodge', 'dodge', 'dodges'),
   move = mk_action('move', 'move', 'moves'),
-  fake = mk_action('fake', 'fake', 'fakes'),
+  feint = mk_action('feint', 'feint', 'feint'),
   counter = mk_action('counter', 'counter', 'counters'),
   recover = mk_action('recover', 'recover', 'recovers')
 }

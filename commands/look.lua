@@ -14,7 +14,7 @@ local function look_around(me, args)
     end
 
     for item in db_item_iter(loc) do
-      tell(me, {{'bright-black', item.name, " is here."}})
+      tell(me, {{'bright-black', item:class().single, " is here."}})
     end
   end
 end
@@ -24,7 +24,7 @@ local function look_at(me, args)
   local creatures = args.results2.creatures_or_self
   local decorations = args.results2.decorations
   if next(items) then
-    tell(me, "it is "..items[1].name)
+    tell(me, "it is " .. items[1]:class().single)
   elseif next(creatures) then
     tell(me, "it is "..creatures[1].name)
   elseif next(decorations) then

@@ -141,6 +141,10 @@ end
 
 --- deserialization ---
 
+local item_class = function(self)
+  return item_class_table[self.class_name]
+end
+
 -- (name, default, decoder)
 local structs = {
   rooms = {
@@ -160,14 +164,14 @@ local structs = {
     {'password', '', percent_decode}
   },
   characters = {
-    {'name',      '', percent_decode},
+    {'name',     '',  percent_decode},
     {'account',  nil, tonumber},
     {'creature', nil, tonumber}
   },
   items = {
-    {'name',     '',  percent_decode},
-    {'class',    '',  percent_decode},
-    {'location', nil, identity}
+    {'class_name', '',         percent_decode},
+    {'class',      item_class, nil},
+    {'location',   nil,        identity}
   }
 }
 
@@ -227,7 +231,7 @@ local function read_data(tname, id, raw, line_number)
 
   for fields, value in data_iter(raw) do
     for i, entry in ipairs(struct) do
-      if entry[1] == fields[1] then
+      if entry[1] == fields[1] and entry[3] then
         decoded_value = entry[3](value)
         assert(
           decoded_value ~= nil,

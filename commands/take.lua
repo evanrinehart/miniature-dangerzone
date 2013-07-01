@@ -5,7 +5,7 @@ local function take_here(me, args)
   db_move_item_to(item, me:self_ref())
   db_commit()
   if item_count > 1 then
-    tell(me, "taken ("..item.name..")")
+    tell(me, "taken ("..item:class().single..")")
   else
     tell(me, "taken")
   end

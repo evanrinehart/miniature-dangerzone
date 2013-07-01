@@ -4,7 +4,7 @@ require('util/dice')
 local function bloopers(me, items, decorations)
   local what
   if items[1] then
-    what = items[1].name
+    what = items[1]:class().single
   else
     what = decorations[1].name
   end
