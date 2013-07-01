@@ -1,12 +1,28 @@
 require('combat')
 require('util/dice')
 
+local function bloopers(me, items, decorations)
+  local what
+  if items[1] then
+    what = items[1].name
+  else
+    what = decorations[1].name
+  end
+  tell(me, "don't try to kill "..what)
+end
+
 local function kill(me, args)
-  -- me is a creature
-  -- if target is nil, change to kill mode
-  -- otherwise start a fight with target
---  local target, creature = target_match(me, target_string)
---  start_combat(me.creature, creature)
+  local targets = args.results1.creatures_or_self
+  local decs = args.results1.decorations
+  local items = args.results1.items
+
+  if #targets > 0 then
+    start_combat(me.creature, targets[1])
+  elseif #items + #decs > 0 then
+    bloopers(me, items, decs)
+  else
+    tell(me, not_found(args.arg1))
+  end
 end
 
 return {
