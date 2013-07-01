@@ -34,7 +34,7 @@ local function move(me, args)
   end
 
   if not dir then
-    tell(me, "usage: ", command_table.move.usage)
+    tell(me, "usage: "..command_table.move.usage)
     return
   end
 
