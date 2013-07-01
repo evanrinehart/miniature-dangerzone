@@ -32,7 +32,7 @@ local function take(me, args)
   elseif #args.results1.creatures_or_self > 0 then
     take_bloopers(me, args)
   else
-    tell(me, "I do not see "..args.arg1.." here")
+    tell(me, not_found(args.arg1))
   end
 end
 

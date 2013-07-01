@@ -47,3 +47,7 @@ function show_number(n, max)
     return n
   end
 end
+
+function not_found(what)
+  return "I do not see "..what.." here"
+end

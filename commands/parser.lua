@@ -71,9 +71,11 @@ local function vopo(me, preps, arg)
   local left, right
   local results1, results2
   local prep_l, prep_r
+  local found_prep
   for i, prep in ipairs(preps) do
     prep_l, prep_r = string.find(arg, "%s+"..prep.."%s")
     if prep_l then
+      found_prep = prep
       left = string.sub(arg, 1, prep_l-1)
       right = string.sub(arg, prep_r+1, -1)
       break
@@ -83,7 +85,7 @@ local function vopo(me, preps, arg)
   if left then
     results1 = command_search(me, left)
     results2 = command_search(me, right)
-    return left, results1, right, results2
+    return left, results1, right, results2, found_prep
   else
     return nil
   end
@@ -93,9 +95,11 @@ local function vxpo(me, preps, arg)
   local left, right
   local results2
   local prep_l, prep_r
+  local found_prep
   for i, prep in ipairs(preps) do
     prep_l, prep_r = string.find(arg, "%s+"..prep.."%s")
     if prep_l then
+      found_prep = prep
       left = string.sub(arg, 1, prep_l-1)
       right = string.sub(arg, prep_r+1, -1)
       break
@@ -104,7 +108,7 @@ local function vxpo(me, preps, arg)
 
   if left then
     results2 = command_search(me, right)
-    return left, right, results2
+    return left, right, results2, prep
   else
     return nil
   end
@@ -114,9 +118,11 @@ local function vopx(me, preps, arg)
   local left, right
   local results1
   local prep_l, prep_r
+  local found_prep
   for i, prep in ipairs(preps) do
     prep_l, prep_r = string.find(arg, "%s+"..prep.."%s")
     if prep_l then
+      found_prep = prep
       left = string.sub(arg, 1, prep_l-1)
       right = string.sub(arg, prep_r+1, -1)
       break
@@ -125,7 +131,7 @@ local function vopx(me, preps, arg)
 
   if left then
     results1 = command_search(me, left)
-    return left, results1, right
+    return left, results1, right, prep
   else
     return nil
   end
@@ -133,16 +139,16 @@ end
 
 local function vpo(me, preps, arg)
   local right
-  local found
+  local found_prep
   local results2
   for i, prep in ipairs(preps) do
-    found, right = string.match(arg, "^("..prep..")%s+(%S.*)")
-    if found then break end
+    found_prep, right = string.match(arg, "^("..prep..")%s+(%S.*)")
+    if found_prep then break end
   end
 
-  if found then
+  if found_prep then
     results2 = command_search(me, right)
-    return right, results2, prep
+    return right, results2, found_prep
   else
     return nil
   end
@@ -176,14 +182,14 @@ function pattern_match_command(me, c, text)
   for i, pattern in ipairs(c.patterns) do
     if pattern == 'vopo' then
       final_pattern = pattern
-      arg1, results1, arg2, results2 = vopo(me, c.preps, rest)
+      arg1, results1, arg2, results2, prep = vopo(me, c.preps, rest)
       if arg1 then break end
     elseif pattern == 'vopx' then
       final_pattern = pattern
-      arg1, results1, arg2 = vopx(me, c.preps, rest)
+      arg1, results1, arg2, prep = vopx(me, c.preps, rest)
       if arg1 then break end
     elseif pattern == 'vxpo' then
-      arg1, arg2, results2 = vxpo(me, c.preps, rest)
+      arg1, arg2, results2, prep = vxpo(me, c.preps, rest)
       if arg1 then break end
     elseif pattern == 'vpo' then
       arg2, results2, prep = vpo(me, c.preps, rest)
@@ -217,7 +223,7 @@ function pattern_match_command(me, c, text)
     return 'match', {
       command = name,
       pattern = final_pattern,
-      prep = nil,
+      prep = prep,
       arg1 = arg1,
       results1 = results1,
       arg2 = arg2,

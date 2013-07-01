@@ -1,27 +1,56 @@
 require('util/misc')
 
-local function location_look(loc, args, buf)
+local function look_around(me, args)
+  local loc = me:location()
   local kind, id = split_ref(loc)
 
   if kind == 'room' then
     local room = db_find('room', id)
-    push(buf, {'yellow', room.name})
-    push(buf, room.description)
+    tell(me, {{'yellow', room.name}})
+    tell(me, room.description)
 
     for cr in db_creatures_iter(loc) do
-      push(buf, {'green', cr.name .. " is here."})
+      tell(me, {{'green', cr.name .. " is here."}})
     end
 
     for item in db_item_iter(loc) do
-      push(buf, {'bright-black', item.name, " is here."})
+      tell(me, {{'bright-black', item.name, " is here."}})
     end
   end
 end
 
+local function look_at(me, args)
+  local items = args.results2.items
+  local creatures = args.results2.creatures_or_self
+  local decorations = args.results2.decorations
+  if next(items) then
+    tell(me, "it is "..items[1].name)
+  elseif next(creatures) then
+    tell(me, "it is "..creatures[1].name)
+  elseif next(decorations) then
+    tell(me, "you look at it")
+  else
+    tell(me, not_found(args.arg2))
+  end
+end
+
+local function look_in(me, args)
+  -- FIXME
+  tell(me, "don't look in that")
+end
+
 local function look(me, args)
-  local buf = {}
-  location_look(me:location(), args, buf)
-  tell(me, buf)
+  if args.arg2 then
+    if args.prep == 'at' then
+      look_at(me, args)
+    elseif args.prep == 'in' then
+      look_in(me, args)
+    else
+      error(tostring(args.prep) .. '?')
+    end
+  else
+    look_around(me, args)
+  end
 end
 
 return {
