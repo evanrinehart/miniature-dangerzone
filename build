@@ -1,4 +1,4 @@
 gcc -I. -o mud main.c core.c net.c script.c log.c eroc.c clock.c -llua -Wall
 mkdir -p data/paranoid
 mkdir -p data/old
-
+mkdir -p log
