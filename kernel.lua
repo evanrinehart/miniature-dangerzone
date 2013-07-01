@@ -6,6 +6,8 @@ require('events/event_queue')
 
 require('util/debug')
 
+require('items')
+
 function boot_signal()
   db_begin("data/world.db")
 end

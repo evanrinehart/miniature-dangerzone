@@ -1,5 +1,21 @@
 require('commands/command_table')
 
+local function item_match(item, text)
+  if item.name == text then
+    return true
+  else
+    local class = item_class_table[item.class]
+    assert(class, "invalid item class ", item.class)
+    for i, a in ipairs(class.aliases) do
+      if a == text then
+        return true
+      end
+    end
+  end
+
+  return false
+end
+
 -- after the command parser determines that
 -- you want one or two things to be searched for
 -- in the area, it runs this on the text for each
@@ -27,14 +43,14 @@ local function command_search(me, text)
   local self = me:self_ref()
 
   for item in db_item_iter(self) do
-    if text == item.name then
+    if item_match(item, text) then
       table.insert(results.items_held, item)
       table.insert(results.items, item)
     end
   end
 
   for item in db_item_iter(here) do
-    if text == item.name then
+    if item_match(item, text) then
       table.insert(results.items_here, item)
       table.insert(results.items, item)
     end
