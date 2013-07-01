@@ -131,6 +131,23 @@ local function vopx(me, preps, arg)
   end
 end
 
+local function vpo(me, preps, arg)
+  local right
+  local found
+  local results2
+  for i, prep in ipairs(preps) do
+    found, right = string.match(arg, "^("..prep..")%s+(%S.*)")
+    if found then break end
+  end
+
+  if found then
+    results2 = command_search(me, right)
+    return right, results2, prep
+  else
+    return nil
+  end
+end
+
 local function vox(me, arg)
   local left, rest = string.match(arg, "(%S+)%s+(%S.*)")
   if left then
@@ -153,9 +170,7 @@ function pattern_match_command(me, c, text)
   if not name then return 'no-match' end
   rest = trim(rest)
 
-print("try:", name, rest)
-
-  local arg1, results1, arg2, results2
+  local arg1, results1, arg2, results2, prep
   local final_pattern
   
   for i, pattern in ipairs(c.patterns) do
@@ -171,7 +186,8 @@ print("try:", name, rest)
       arg1, arg2, results2 = vxpo(me, c.preps, rest)
       if arg1 then break end
     elseif pattern == 'vpo' then
-      
+      arg2, results2, prep = vpo(me, c.preps, rest)
+      if arg2 then break end
     elseif pattern == 'vox' then
       arg1, results1, arg2 = vox(me, rest)
       if arg1 then break end
@@ -197,7 +213,7 @@ print("try:", name, rest)
     end
   end
 
-  if arg1 then
+  if arg1 or arg2 then
     return 'match', {
       command = name,
       pattern = final_pattern,

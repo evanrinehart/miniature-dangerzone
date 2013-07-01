@@ -526,7 +526,6 @@ function db_begin(working_file)
     database_log_file = io.open(working_file, "a")
     c_log("database ready!")
 
-debug_indexes()
   else
     c_log("!!! database corruption detected")
     error(result)

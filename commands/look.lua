@@ -1,9 +1,9 @@
 require('util/misc')
 
 local function location_look(loc, args, buf)
-  local class, id = split_ref(loc)
+  local kind, id = split_ref(loc)
 
-  if class == 'room' then
+  if kind == 'room' then
     local room = db_find('room', id)
     push(buf, {'yellow', room.name})
     push(buf, room.description)
