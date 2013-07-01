@@ -221,7 +221,7 @@ function start_combat(attacker, defender)
       if coroutine.status(co) == 'suspended' then
         schedule_event(now+1, combat_event)
       elseif coroutine.status(co) == 'dead' then
-        -- do nothing
+        combat_instance_table[s.location] = nil
       else
         error("combat coroutine in anomalous status: " .. coroutine.status(co) .. "\n")
       end
