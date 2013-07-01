@@ -28,6 +28,10 @@ local function location(self)
   end
 end
 
+local function self_ref(self)
+  return mk_ref('creature', self.creature.id)
+end
+
 function mk_player(fd, addr)
   return {
     fd = fd,
@@ -41,6 +45,7 @@ function mk_player(fd, addr)
     boot = boot,
     take_input = take_input,
     location = location,
+    self_ref = self_ref,
     in_combat = false
   }
 end

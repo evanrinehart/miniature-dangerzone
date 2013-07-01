@@ -4,6 +4,8 @@ require('players/player')
 require('players/player_table')
 require('events/event_queue')
 
+require('util/debug')
+
 function boot_signal()
   db_begin("data/world.db")
 end

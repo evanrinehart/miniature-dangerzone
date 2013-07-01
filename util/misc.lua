@@ -34,3 +34,16 @@ function defer(f, ...)
     return f(unpack(args))
   end
 end
+
+function show_number(n, max)
+  if n < 10 then
+    return ({
+      'one', 'two', 'three', 'four', 'five',
+      'six', 'seven', 'eight', 'nine'
+    })[n]
+  elseif n > max then
+    return 'a lot of'
+  else
+    return n
+  end
+end

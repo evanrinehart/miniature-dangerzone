@@ -22,16 +22,35 @@ local dir_names = {
   s = 'south'
 }
 
-local function move(me, where)
+local function move(me, args)
   local my = me
   local kind, place = db_ref(my:location())
+  local dir
+
+-- parser is returning cases where you have vx and x is ''
+-- it should pick v instead otherwise vx '' == "usage"
+
+print("arg1", type(args.arg1), #args.arg1)
+  if args.arg1 then
+print("ok")
+    dir = dirs[args.arg1]
+  else
+print("command: ", args.command)
+    dir = dirs[args.command]
+  end
+
+  if not dir then
+    tell(me, "usage: ", command_table.move.usage)
+    return
+  end
+
   if kind == 'room' then
-    local dest = place.exits[where]
+    local dest = place.exits[dir]
     if dest then
-      db_move_creature_to(my.creature, dest)
+      db_move_creature_to(me.creature, dest)
       db_commit()
-      tell(me, "you move "..dir_names[where])
-      command_table.look.effect(me, '') -- need function for this
+      tell(me, "you move "..dir_names[dir])
+      command_table.look.effect(me) -- need function for this
     else
       tell(me, "there is no way")
     end
@@ -40,27 +59,14 @@ local function move(me, where)
   end
 end
 
-local function parser(s0)
-  local s1 = trim(s0)
-  local result = parse_first_word('move', {'move'}, s0)
-  local d1 = dirs[s1]
-  if result then
-    local rest = result[2]
-    local d2 = dirs[trim(rest)]
-    if d2 then
-      return {'move', d2}
-    else
-      return {'error', "move which way? (nsewud)"}
-    end
-  elseif d1 then
-    return {'move', d1}
-  else
-    return nil
-  end
-end
-
-
 return {
   effect = move,
-  parser = parser
+  usage = "move <direction> or one of [neswud]",
+  patterns = {'vx', 'v'},
+  verbs = {
+    'move',
+    'e', 'w', 's', 'n', 'u', 'd',
+    'east', 'west', 'south', 'north',
+    'up', 'down'
+  }
 }

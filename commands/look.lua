@@ -1,6 +1,6 @@
 require('util/misc')
 
-local function location_look(loc, buf)
+local function location_look(loc, args)
   local class, id = split_ref(loc)
 
   if class == 'room' then
@@ -18,17 +18,16 @@ local function location_look(loc, buf)
   end
 end
 
-local function look(my, target)
+local function look(me, args)
   local buf = {}
-  location_look(my:location(), buf)
-  tell(my, buf)
-end
-
-local function parser(s)
-  return parse_first_word('look', {'look at', 'look', 'l'}, s)
+--  location_look(me:location(), buf)
+--  tell(me, buf)
 end
 
 return {
   effect = look,
-  parser = parser
+  usage = "look, look at <something>, look in <something>",
+  patterns = {'vpo', 'v'},
+  verbs = {'l', 'look'},
+  preps = {'at', 'in'}
 }
