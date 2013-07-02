@@ -1,20 +1,28 @@
 require('commands/command_table')
 
 local function item_match(item, text)
-  local item_class = item:class()
-  assert(item_class, "invalid item class ", item.class_name)
+  local cl = item:class()
+  assert(cl, "invalid item class ", item.class_name)
 
-  if item_class.single == text then
-    return true
+  if cl.single == text then
+    return true, false
+  elseif cl.plural == text then
+    return true, true
   else
-    for i, a in ipairs(item_class.aliases) do
+    for i, a in ipairs(cl.aliases) do
       if a == text then
-        return true
+        return true, false
+      end
+    end
+
+    for i, a in ipairs(cl.plural_aliases) do
+      if a == text then
+        return true, true
       end
     end
   end
 
-  return false
+  return false, false
 end
 
 -- after the command parser determines that
@@ -52,17 +60,23 @@ local function command_search(me, text, all, pick)
   local here = me:location()
   local self = me:self_ref()
 
+  local match, plural
+
   for item in db_item_iter(self) do
-    if item_match(item, text) then
+    match, plural = item_match(item, text)
+    if match then
       table.insert(results.items_held, item)
       table.insert(results.items, item)
+      if plural then results.all = true end
     end
   end
 
   for item in db_item_iter(here) do
-    if item_match(item, text) then
+    match, plural = item_match(item, text)
+    if match then
       table.insert(results.items_here, item)
       table.insert(results.items, item)
+      if plural then results.all = true end
     end
   end
 
