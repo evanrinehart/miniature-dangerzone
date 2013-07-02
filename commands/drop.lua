@@ -5,7 +5,13 @@ local function drop(me, args)
     if #items == 0 then
       tell(me, "you don't have it")
     else
-      for i, item in ipairs(items) do
+      local drops
+      if args.results1.all then
+        drops = items
+      else
+        drops = {items[1]}
+      end
+      for i, item in ipairs(drops) do
         db_move_item_to(item, here)
         tell(me, item:class().single.." dropped")
       end
