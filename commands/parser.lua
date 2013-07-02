@@ -64,7 +64,7 @@ local function command_search(me, text, all, pick)
 
   for item in db_item_iter(self) do
     match, plural = item_match(item, text)
-    if match then
+    if match or text == 'all' then
       table.insert(results.items_held, item)
       table.insert(results.items, item)
       if plural then results.all = true end
@@ -73,7 +73,7 @@ local function command_search(me, text, all, pick)
 
   for item in db_item_iter(here) do
     match, plural = item_match(item, text)
-    if match then
+    if match or text == 'all' then
       table.insert(results.items_here, item)
       table.insert(results.items, item)
       if plural then results.all = true end
@@ -81,7 +81,7 @@ local function command_search(me, text, all, pick)
   end
 
   for cr in db_creatures_iter(here) do
-    if text == cr.name then
+    if text == cr.name or text == 'all' then
       table.insert(results.creatures_or_self, cr)
       if cr.id ~= me.creature.id then
         table.insert(results.creatures, cr)
