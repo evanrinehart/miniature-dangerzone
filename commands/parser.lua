@@ -26,8 +26,16 @@ end
 -- later we can add support for "bag #4" 
 --
 -- also we should add searching containers on you
+--
+-- all means that the player typed "all"
+-- just stick all=true in the result in this case
+-- also stick all=true in there if they typed a plural alias
+--
+-- pick non-nil is a number which determines which
+-- one they want. put it in pick= in the result so
+-- the command can deal with it
 
-local function command_search(me, text)
+local function command_search(me, text, all, pick)
   local results = {
     items_held = {},
     items_here = {},
@@ -37,8 +45,8 @@ local function command_search(me, text)
     players = {},
     players_here = {},
     decorations = {},
-    selection = nil, -- like 'thing #3'
-    all = false -- like 'all things'
+    selection = pick,
+    all = all ~= nil
   }
 
   local here = me:location()
@@ -70,10 +78,21 @@ local function command_search(me, text)
   -- search for decorations here
   -- search for names of connected players
 
-pp(results)
   return results
 end
-  
+
+local function check_picker(raw)
+  if raw == 'all' then return 'all', true, nil end
+  local arg, all, pick
+
+  arg, pick = string.match(raw, '^([^#]*)%s+#(%d+)$')
+  if arg then return arg, nil, tonumber(pick) end
+
+  arg = string.match(raw, 'all%s+(%S.*)')
+  if arg then return arg, true, nil end
+
+  return raw, nil, nil
+end
 
 
 -- patterns
@@ -85,101 +104,138 @@ end
 -- vx
 -- v
 
-local function vopo(me, preps, arg)
+local function vopo(me, preps, raw)
   local left, right
-  local results1, results2
   local prep_l, prep_r
   local found_prep
   for i, prep in ipairs(preps) do
-    prep_l, prep_r = string.find(arg, "%s+"..prep.."%s")
+    prep_l, prep_r = string.find(raw, "%s+"..prep.."%s")
     if prep_l then
       found_prep = prep
-      left = string.sub(arg, 1, prep_l-1)
-      right = string.sub(arg, prep_r+1, -1)
+      left = string.sub(raw, 1, prep_l-1)
+      right = string.sub(raw, prep_r+1, -1)
       break
     end
   end
 
   if left then
-    results1 = command_search(me, left)
-    results2 = command_search(me, right)
-    return left, results1, right, results2, found_prep
+    local arg1, all1, pick1 = check_picker(left)
+    local results1 = command_search(me, left, all1, pick1)
+    local arg2, all2, pick2 = check_picker(right)
+    local results2 = command_search(me, right, all2, pick2)
+    return {
+      arg1 = arg1,
+      results1 = results1,
+      arg2 = arg2,
+      results2 = results2,
+      prep = found_prep
+    }
   else
     return nil
   end
 end
 
-local function vxpo(me, preps, arg)
+local function vxpo(me, preps, raw)
   local left, right
-  local results2
   local prep_l, prep_r
   local found_prep
   for i, prep in ipairs(preps) do
-    prep_l, prep_r = string.find(arg, "%s+"..prep.."%s")
+    prep_l, prep_r = string.find(raw, "%s+"..prep.."%s")
     if prep_l then
       found_prep = prep
-      left = string.sub(arg, 1, prep_l-1)
-      right = string.sub(arg, prep_r+1, -1)
+      left = string.sub(raw, 1, prep_l-1)
+      right = string.sub(raw, prep_r+1, -1)
       break
     end
   end
 
   if left then
-    results2 = command_search(me, right)
-    return left, right, results2, prep
+    local arg, all, pick = check_picker(right)
+    local results = command_search(me, right, all, pick)
+    return {
+      arg1 = left,
+      arg2 = right,
+      results2 = results,
+      prep = found_prep
+    }
   else
     return nil
   end
 end
 
-local function vopx(me, preps, arg)
+local function vopx(me, preps, raw)
   local left, right
-  local results1
   local prep_l, prep_r
   local found_prep
   for i, prep in ipairs(preps) do
-    prep_l, prep_r = string.find(arg, "%s+"..prep.."%s")
+    prep_l, prep_r = string.find(raw, "%s+"..prep.."%s")
     if prep_l then
       found_prep = prep
-      left = string.sub(arg, 1, prep_l-1)
-      right = string.sub(arg, prep_r+1, -1)
+      left = string.sub(raw, 1, prep_l-1)
+      right = string.sub(raw, prep_r+1, -1)
       break
     end
   end
 
   if left then
-    results1 = command_search(me, left)
-    return left, results1, right, prep
+    local arg, all, pick = check_picker(left)
+    local results = command_search(me, arg, all, pick)
+    return {
+      arg1 = arg1,
+      results1 = results,
+      arg2 = rest,
+      prep = found_prep
+    }
   else
     return nil
   end
 end
 
-local function vpo(me, preps, arg)
-  local right
-  local found_prep
-  local results2
+local function vpo(me, preps, raw)
+  local right, found_prep
   for i, prep in ipairs(preps) do
-    found_prep, right = string.match(arg, "^("..prep..")%s+(%S.*)")
+    found_prep, right = string.match(raw, "^("..prep..")%s+(%S.*)")
     if found_prep then break end
   end
 
   if found_prep then
-    results2 = command_search(me, right)
-    return right, results2, found_prep
+    local arg, all, pick = check_picker(right)
+    local results = command_search(me, arg, all, pick)
+    return {
+      arg2 = arg,
+      results2 = results,
+      prep = found_prep
+    }
   else
     return nil
   end
 end
 
-local function vox(me, arg)
+local function vox(me, raw)
   local left, rest = string.match(arg, "(%S+)%s+(%S.*)")
   if left then
-    local results = command_search(me, left)
-    return left, results, rest
+    local arg, all, pick = check_picker(left)
+    local results = command_search(me, arg, all, pick)
+    return {
+      arg1 = arg,
+      results1 = results,
+      arg2 = rest
+    }
   else
     return nil
   end
+end
+
+local function vo(me, raw)
+  if raw == '' then return nil end
+
+  local arg, all, pick = check_picker(raw)
+  local results, all_inducing_plural = command_search(me, arg, all, pick)
+
+  return {
+    arg1 = arg,
+    results1 = results
+  }
 end
 
 function pattern_match_command(me, c, text)
@@ -192,61 +248,50 @@ function pattern_match_command(me, c, text)
     if name then break end
   end
   if not name then return 'no-match' end
+
   rest = trim(rest)
 
-  local arg1, results1, arg2, results2, prep
-  local final_pattern
+  local results, final_pattern
   
   for i, pattern in ipairs(c.patterns) do
+    final_pattern = pattern
     if pattern == 'vopo' then
-      final_pattern = pattern
-      arg1, results1, arg2, results2, prep = vopo(me, c.preps, rest)
-      if arg1 then break end
+      results = vopo(me, c.preps, rest)
+      if results then break end
     elseif pattern == 'vopx' then
-      final_pattern = pattern
-      arg1, results1, arg2, prep = vopx(me, c.preps, rest)
-      if arg1 then break end
+      results = vopx(me, c.preps, rest)
+      if results then break end
     elseif pattern == 'vxpo' then
-      arg1, arg2, results2, prep = vxpo(me, c.preps, rest)
-      if arg1 then break end
+      results = vxpo(me, c.preps, rest)
+      if results then break end
     elseif pattern == 'vpo' then
-      arg2, results2, prep = vpo(me, c.preps, rest)
-      if arg2 then break end
+      results = vpo(me, c.preps, rest)
+      if results then break end
     elseif pattern == 'vox' then
-      arg1, results1, arg2 = vox(me, rest)
-      if arg1 then break end
+      results = vox(me, rest)
+      if results then break end
     elseif pattern == 'vo' then
-      if rest ~= '' then
-        results1 = command_search(me, rest)
-        arg1 = rest
-        break
-      end
+      results = vo(me, rest)
+      if results then break end
     elseif pattern == 'vx' then
       if rest ~= '' then
-        arg1 = rest
+        results = {arg1 = rest}
         break
       end
     elseif pattern == 'v' then
       if rest == '' then
-        return 'match', {command = name}
-      else
-        return 'usage'
+        results = {}
+        break
       end
     else
       error("unrecognized command pattern")
     end
   end
 
-  if arg1 or arg2 then
-    return 'match', {
-      command = name,
-      pattern = final_pattern,
-      prep = prep,
-      arg1 = arg1,
-      results1 = results1,
-      arg2 = arg2,
-      results2 = results2
-    }
+  if results then
+    results.command = name
+    results.pattern = final_pattern
+    return 'match', results
   else
     return 'usage'
   end

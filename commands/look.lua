@@ -13,8 +13,31 @@ local function look_around(me, args)
       tell(me, {{'green', cr.name .. " is here."}})
     end
 
+    local item_groups = {}
     for item in db_item_iter(loc) do
-      tell(me, {{'bright-black', item:class().single, " is here."}})
+      local cl = item:class()
+      local single = cl.single
+      local plural = cl.plural
+      local key = single..','..plural
+      local rec = item_groups[key]
+      if rec then
+        rec.counter = rec.counter + 1
+      else
+        item_groups[key] = {
+          counter = 1,
+          class = cl
+        }
+      end
+    end
+
+    for k, rec in pairs(item_groups) do
+      local text
+      if rec.counter == 1 then
+        text = rec.class.single
+      else
+        text = show_number(rec.counter, 27) .. ' ' .. rec.class.plural
+      end
+      tell(me, {{'bright-black', text}})
     end
   end
 end

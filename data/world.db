@@ -4,6 +4,8 @@ write items 3 location=room:1&class_name=bottle
 write items 4 location=room:1&class_name=small_bag
 write items 5 location=room:1&class_name=lead_pipe
 write items 6 location=room:1&class_name=gloves
+write items 7 location=room:1&class_name=gloves
+write items 8 location=room:1&class_name=bottle
 write characters 1 name=barfos&account=1&creature=1
 write characters 2 name=dummy&account=1&creature=2
 write rooms 1 zone=&exits.e=room:2&description=A%20blank%20room%20with%20nothing%20all%20around.&name=Dummy%20Room
