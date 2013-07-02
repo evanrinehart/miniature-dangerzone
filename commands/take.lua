@@ -1,13 +1,21 @@
 local function take_here(me, args)
   local items = args.results1.items_here
-  local item = items[1]
-  local item_count = #items
-  db_move_item_to(item, me:self_ref())
-  db_commit()
-  if item_count > 1 then
-    tell(me, "taken ("..item:class().single..")")
+  if args.results1.all then
+    for i, item in ipairs(items) do
+      db_move_item_to(item, me:self_ref())
+      tell(me, "taken ("..item:class().single..")")
+    end
+    db_commit()
   else
-    tell(me, "taken")
+    local item = items[1]
+    local item_count = #items
+    db_move_item_to(item, me:self_ref())
+    db_commit()
+    if item_count > 1 then
+      tell(me, "taken ("..item:class().single..")")
+    else
+      tell(me, "taken")
+    end
   end
 end
 
