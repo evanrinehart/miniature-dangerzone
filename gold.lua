@@ -1,5 +1,5 @@
 local function detect(me, args)
-  local raw = string.match(args.arg1, "^(%d+)%s+gold")
+  local raw = string.match(args.arg1, "^(-?%d+)%s+gold")
   if raw then return tonumber(raw) else return nil end
 end
 -- drop 9 gold in pit
