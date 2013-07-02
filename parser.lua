@@ -1,4 +1,4 @@
-require('commands/command_table')
+require('commands')
 
 local function item_match(item, text)
   local cl = item:class()

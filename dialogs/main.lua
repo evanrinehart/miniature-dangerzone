@@ -1,5 +1,5 @@
-require('commands/command_table')
-require('commands/parser')
+require('commands')
+require('parser')
 require('players/do_command')
 
 function main_dialog(me)
