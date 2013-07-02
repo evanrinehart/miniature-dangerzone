@@ -1,4 +1,5 @@
 command_table = {
+  parse = require('commands/parse'),
   kill = require('commands/kill'),
   knockout = nil,
   flee = nil,

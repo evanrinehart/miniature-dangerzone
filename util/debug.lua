@@ -35,3 +35,44 @@ function pp(v)
 
 end
 
+function pps(v)
+  local pt
+  local pv
+  local buf = {}
+  local write = function(x)
+    table.insert(buf, x)
+  end
+
+  pv = function(l, v)
+    local my_type = type(v)
+    if my_type == 'table' then
+      if next(v) then
+        pt(l, v)
+      else
+        write("{}")
+      end
+    else
+      write(tostring(v))
+    end
+  end
+
+  pt = function(l, t)
+    local indent0 = string.rep('  ', l-1)
+    local indent = indent0 .. '  '
+    write("{\n")
+    for k, v in pairs(t) do
+      write(indent)
+      write(tostring(k))
+      write(' => ')
+      pv(l+1, v)
+      write("\n")
+    end
+    write(indent0)
+    write('}')
+  end
+
+  pv(1, v)
+  write("\n")
+
+  return table.concat(buf)
+end
