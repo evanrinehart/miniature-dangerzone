@@ -11,11 +11,6 @@
 
 static int server = -1;
 
-// to start a listening socket the steps are:
-// s = socket()
-// bind(s)
-// listen(s)
-// c = accept(s) (eventually)
 void listen_on(int port){
   struct sockaddr_in addr;
   int reuse_addr = 1;
@@ -73,7 +68,7 @@ struct connection get_new_connection(){
   struct connection conn;
   int client;
 
-  // TODO get address
+  /* TODO get address */
   client = accept(server, NULL, NULL);
 
   conn.fd = client;

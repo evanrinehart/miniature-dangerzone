@@ -57,7 +57,7 @@ void core_loop(){
       exit(EXIT_FAILURE);
     }
     else if(ready == 0){
-      // do nothing
+      /* do nothing */
     }
     else{
       if(FD_ISSET(server, &fds)){
@@ -65,7 +65,7 @@ void core_loop(){
         write_log("new connection (%d) from %s\n", new_client.fd, new_client.addr);
         if(conn_count == MAX_CONNECTIONS){
           write_log("too many connections, dropping %d!\n", new_client.fd);
-          // TODO notify client before disconnecting him
+          /* TODO notify client before disconnecting him */
           disconnect(new_client.fd);
         }
         else{
@@ -88,7 +88,7 @@ void core_loop(){
             if(n == 0){
               write_log("peer %d is now gone\n", fd);
             }
-            else{ // -1
+            else{ /* -1 */
               write_log("recv error (peer %d): %s\n", fd, strerror(errno));
             }
 
