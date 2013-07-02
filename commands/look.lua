@@ -10,7 +10,10 @@ local function look_around(me, args)
     tell(me, room.description)
 
     for cr in db_creatures_iter(loc) do
-      tell(me, {{'green', cr.name .. " is here."}})
+      if cr.id ~= me.creature.id then
+        local color = creature_color(cr)
+        tell(me, {{color, cr.name .. " is here."}})
+      end
     end
 
     local item_groups = {}

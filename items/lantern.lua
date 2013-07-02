@@ -8,5 +8,3 @@ return {
     tell(me, "you hold up the lantern to get a better look")
   end
 }
-
-

@@ -43,7 +43,7 @@ end
 -- one they want. put it in pick= in the result so
 -- the command can deal with it
 
-local function command_search(me, text, all, pick)
+function command_search(me, text, all, pick)
   local results = {
     items_held = {},
     items_here = {},

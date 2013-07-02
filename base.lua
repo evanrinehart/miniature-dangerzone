@@ -96,6 +96,23 @@ local function rebuild_indexes()
 end
 
 
+--- id generators ---
+
+local sequences = {}
+
+local function gen_id(kind)
+  assert(sequences[kind])
+  local id = sequences[kind]+1
+  sequences[kind] = sequences[kind]+1
+  return id
+end
+
+local function load_sequence(kind, id)
+  if sequences[kind] == nil or id > sequences[kind] then
+    sequences[kind] = id
+  end
+end
+
 --- modification queue ---
 local modification_queue = {}
 
@@ -156,6 +173,7 @@ local structs = {
   creatures = {
     {'name',     'unnamed', percent_decode},
     {'location', nil,       identity},
+    {'gender',   nil,       identity},
     {'form',     nil,       identity},
     debug = debug_creatures
   },
@@ -169,9 +187,10 @@ local structs = {
     {'creature', nil, tonumber}
   },
   items = {
-    {'class_name', '',         percent_decode},
+    {'class_name', '',         identity},
     {'class',      item_class, nil},
-    {'location',   nil,        identity}
+    {'location',   nil,        identity},
+    {'count',      nil,        tonumber}
   }
 }
 
@@ -209,6 +228,8 @@ local function read_data(tname, id, raw, line_number)
   if struct == nil then
     error("load: unknown tname " .. tostring(tname) .. " on " .. line_number)
   end
+
+  load_sequence(tname, id)
 
   if base[tname][id] == nil then
     thing = {id = id}
@@ -336,6 +357,7 @@ local serializers = {
     db_write(c.id, " ")
     db_write("name=", percent_encode(c.name), "&")
     db_write("location=", c.location, "&")
+    db_write("gender=", c.gender, "&")
     db_write("form=", "\n")
   end,
 
@@ -359,10 +381,15 @@ local serializers = {
   items = function(item)
     db_write(
       "write items ", item.id, " ",
-      "name=", percent_encode(item.name), '&',
       "location=", item.location, '&',
-      "class=", item.class, "\n"
+      "class_name=", item.class_name
     )
+
+    if item.count then
+      db_write('&count='..item.count)
+    end
+
+    db_write("\n")
   end
 }
 
@@ -485,12 +512,35 @@ function db_move_item_to(item, loc)
     clear_index('items_in_things', prev, id)
     write_index('items_in_things', loc, id)
     item.location = loc
-    db_write("write items ", id, ' ', "location=", loc, "\n")
+    db_write("write items ", id, " location=", loc, "\n")
   end)
 end
 
+function db_create_item(item)
+  enqueue_mod(function()
+    local id = gen_id('items')
+    item.id = id
+    item.class = item_class
+    base.items[id] = item
+    write_index('items_in_things', item.location, id)
+    serializers.items(item)
+  end)
+end
 
-
+function db_modify_count(item, adjustment)
+  assert(item.count, "item has no count")
+  enqueue_mod(function()
+    local net = item.count + adjustment
+    if net == 0 then
+      base.items[item.id] = nil
+      clear_index('items_in_things', item.location, item.id)
+      db_write('delete items ', item.id, "\n")
+    else
+      item.count = net
+      db_write('write items ', item.id, ' count=', net, "\n")
+    end
+  end)
+end
 
 
 --- maintenance ---

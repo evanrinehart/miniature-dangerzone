@@ -1,5 +1,12 @@
+require('gold')
+
 local function drop(me, args)
   if args.pattern == 'vo' then
+    if gold_commands.detect(me, args) then
+      gold_commands.drop(me, args)
+      return
+    end
+
     local items = args.results1.items_held
     local here = me:location()
     if #items == 0 then
