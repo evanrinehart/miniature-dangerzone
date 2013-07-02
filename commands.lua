@@ -21,6 +21,7 @@ command_table = {
   close = nil,
   use = nil,
   help = nil,
+  info = nil,
   quit = nil,
   say = nil,
   tell = nil,
