@@ -38,10 +38,18 @@ end
 local function give(me, args)
 end
 
+-- merge
+local function merge(me, args)
+  -- combine several bags of gold into one
+  -- deletes all by the lowest numbered gold bags
+  --   this may result in more than one bag of gold
+  --   there is a per-bag maximum of 65536 gold coins
+end
 
 gold_commands = {
   detect = detect,
   drop = drop,
   put = put,
   give = give,
+  merge = merge
 }
