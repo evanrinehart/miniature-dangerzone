@@ -42,3 +42,15 @@ end
 function lookup_player_maybe(fd)
   return the_player_table[fd]
 end
+
+function players_iter()
+  local player, fd
+  return function()
+    fd, player = next(the_player_table, fd)
+    if fd then
+      return player
+    else
+      return nil
+    end
+  end
+end

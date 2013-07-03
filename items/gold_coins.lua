@@ -3,7 +3,7 @@ return {
   single = "a gold coin",
   plural = "gold coins",
   aliases = {'gold', 'coin'},
-  plural_aliases = {'coins'}
+  plural_aliases = {'coins'},
   attributes = {'count'},
   use = function(me)
   end
