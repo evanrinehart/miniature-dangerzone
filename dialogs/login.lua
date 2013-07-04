@@ -10,6 +10,7 @@ function login_dialog(me)
   tell_nonl(me, "username? ")
   username = ask()
   tell_nonl(me, "password? ")
+  password_mode(me)
   password = ask()
 
   if db_check_account_password(username, password) then

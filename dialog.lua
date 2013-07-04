@@ -31,6 +31,10 @@ function tell_nonl(player, text)
   tell(player, text, 'nonl')
 end
 
+function password_mode(player)
+  c_send(player, json_encode({['password-mode']=true}))
+  c_send(player, "\n")
+end
 
 function ask()
   return coroutine.yield()
