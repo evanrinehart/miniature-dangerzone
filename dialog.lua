@@ -1,5 +1,6 @@
 require('util/content')
 
+--[[
 function tell(player, content)
   tell_nonl(player, content)
   c_send(player.fd, "\n")
@@ -17,6 +18,17 @@ function tell_nonl(player, content)
   else
     error("invalid type for tell")
   end
+end
+--]]
+
+function tell(player, text, ...)
+  local json = json_encode(encode_content(text, {...}))
+  c_send(player.fd, json)
+  c_send(player.fd, "\n")
+end
+
+function tell_nonl(player, text)
+  tell(player, text, 'nonl')
 end
 
 

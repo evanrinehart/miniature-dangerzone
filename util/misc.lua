@@ -55,7 +55,7 @@ end
 function creature_color(cr)
   if cr.gender == 'none' then return 'green' end
   if cr.gender == 'female' then return 'magenta' end
-  if cr.gender == 'male' then return 'cyan' end
-  if cr.gender == 'root' then return 'yellow' end
+  if cr.gender == 'male' then return 'ice' end
+  if cr.gender == 'root' then return 'gold' end
   return 'white'
 end

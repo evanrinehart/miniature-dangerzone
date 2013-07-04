@@ -32,7 +32,7 @@ local color_names = {
   ["bright-white"]   = cc.bold .. cc.white
 }
   
-
+--[[
 function encode_content(content)
   local buf = {}
   local color, text
@@ -48,4 +48,60 @@ function encode_content(content)
     end
   end
   return table.concat(buf, "\n")
+end
+]]--
+
+function json_string(s)
+  -- in a basic way, we just need to replace newlines with \n
+  return (string.gsub(s, "\n", "\\n"))
+end
+
+function json_encode(tab)
+  local buf = {'{'}
+  local t
+  local trailing_comma = false
+  for k, v in pairs(tab) do
+    table.insert(buf, '"'..k..'":')
+    t = type(v)
+    if t == 'string' then
+      table.insert(buf, '"')
+      table.insert(buf, json_string(v))
+      table.insert(buf, '"')
+    elseif t == 'nil' then
+      table.insert(buf, 'null')
+    elseif v == false then
+      table.insert(buf, 'false')
+    elseif v == true then
+      table.insert(buf, 'true')
+    elseif t == 'table' then
+      table.insert(buf, json_encode(v))
+    elseif t == 'number' then
+      table.insert(buf, v)
+    else
+      error("can't json encode "..t)
+    end
+    table.insert(buf, ',')
+    trailing_comma = true
+  end
+  if trailing_comma then
+    table.remove(buf)
+  end
+  table.insert(buf, '}')
+  return table.concat(buf)
+end
+
+function encode_content(content, options)
+  local message = {
+    text = content
+  }
+
+  for i, opt in ipairs(options) do
+    if opt == 'nonl' then message['nonl']=true
+    elseif opt == 'bold' then message['bold']=true
+    elseif opt == 'wrap' then message['wrap']=true
+    else message['color']=opt
+    end
+  end
+
+  return message
 end

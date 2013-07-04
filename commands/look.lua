@@ -6,13 +6,13 @@ local function look_around(me, args)
 
   if kind == 'room' then
     local room = db_find('room', id)
-    tell(me, {{'yellow', room.name}})
-    tell(me, room.description)
+    tell(me, room.name, 'yellow')
+    tell(me, room.description, 'wrap')
 
     for cr in db_creatures_iter(loc) do
       if cr.id ~= me.creature.id then
         local color = creature_color(cr)
-        tell(me, {{color, cr.name .. " is here."}})
+        tell(me, cr.name .. " is here.", color)
       end
     end
 
@@ -40,7 +40,7 @@ local function look_around(me, args)
       else
         text = show_number(rec.counter, 27) .. ' ' .. rec.class.plural
       end
-      tell(me, {{'bright-black', text}})
+      tell(me, text, 'gray')
     end
   end
 end
