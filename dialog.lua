@@ -32,8 +32,8 @@ function tell_nonl(player, text)
 end
 
 function password_mode(player)
-  c_send(player, json_encode({['password-mode']=true}))
-  c_send(player, "\n")
+  c_send(player.fd, json_encode({['password-mode']=true}))
+  c_send(player.fd, "\n")
 end
 
 function ask()
