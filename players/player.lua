@@ -9,7 +9,7 @@ local function take_input(self, input)
   if message then
     error_message = dialog(message)
     if error_message then
-      c_send(fd, error_message)
+      c_send(fd, json_encode({['crash'] = error_message}))
       c_send(fd, "\n")
       c_kick(fd)
     end
