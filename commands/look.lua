@@ -66,6 +66,7 @@ local function look_in(me, args)
 end
 
 local function look(me, args)
+  tell(me, '')
   if args.arg2 then
     if args.prep == 'at' then
       look_at(me, args)
@@ -77,6 +78,7 @@ local function look(me, args)
   else
     look_around(me, args)
   end
+  tell(me, '')
 end
 
 return {
