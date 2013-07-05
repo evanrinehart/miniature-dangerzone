@@ -20,7 +20,14 @@ local function drop(me, args)
       end
       for i, item in ipairs(drops) do
         db_move_item_to(item, here)
-        tell(me, item:class().single.." dropped")
+        tell_room2(here, me.creature,
+          mk_msg(item:class().single.." dropped"),
+          mk_msg(string.format(
+            "%s drops %s",
+            me.creature.name,
+            item:class().single
+          ))
+        )
       end
       db_commit()
     end

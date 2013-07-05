@@ -55,8 +55,8 @@ local function mk_combat_instance(initial_fights)
 
   local players = {}
   for i, f in ipairs(initial_fights) do
-    local c1 = f.attacker.id
-    local c2 = f.defender.id
+    local c1 = f.attacker
+    local c2 = f.defender
     local p1 = player_for_creature(c1)
     local p2 = player_for_creature(c2)
 
@@ -79,7 +79,7 @@ end
 
 local function combat_tell(s, text)
   for cr in db_creatures_iter(s.location) do
-    local watcher = player_for_creature(cr.id)
+    local watcher = player_for_creature(cr)
     if watcher then
       tell(watcher, text)
     end
@@ -92,11 +92,11 @@ local function combat_tell3(
   between_them_text, at_you_text, from_you_text
 )
 
-  local from_player = player_for_creature(from_creature.id)
-  local to_player = player_for_creature(to_creature.id)
+  local from_player = player_for_creature(from_creature)
+  local to_player = player_for_creature(to_creature)
 
   for cr in db_creatures_iter(s.location) do
-    local watcher = player_for_creature(cr.id)
+    local watcher = player_for_creature(cr)
     if watcher then
       if watcher == from_player then
         tell(watcher, from_you_text)

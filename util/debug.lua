@@ -3,13 +3,14 @@ function pp(v)
   local pv
 
   pv = function(l, v)
-    local my_type = type(v)
-    if my_type == 'table' then
+    if type(v) == 'table' then
       if next(v) then
         pt(l, v)
       else
         io.write("{}")
       end
+    elseif type(v) == 'string' and tonumber(v) ~= nil then
+      io.write('"'..tostring(v)..'"')
     else
       io.write(tostring(v))
     end
@@ -21,7 +22,11 @@ function pp(v)
     io.write("{\n")
     for k, v in pairs(t) do
       io.write(indent)
-      io.write(tostring(k))
+      if(type(k) == 'string' and tonumber(k) ~= nil) then
+        io.write('"'..tostring(k)..'"')
+      else
+        io.write(tostring(k))
+      end
       io.write(' => ')
       pv(l+1, v)
       io.write("\n")

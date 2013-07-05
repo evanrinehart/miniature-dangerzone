@@ -28,6 +28,17 @@ function split_ref(ref)
   return kind, tonumber(id)
 end
 
+function split(str, pattern)
+  local l, r = string.find(str, pattern)
+  if l then
+    local left = string.sub(str, 0, l)
+    local right = string.sub(str, r+1, -1)
+    return left, right
+  else
+    return nil
+  end
+end
+
 function defer(f, ...)
   local args = {...}
   return function()

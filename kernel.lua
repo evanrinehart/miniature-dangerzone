@@ -13,7 +13,7 @@ function boot_signal()
 end
 
 function connect_signal(fd, addr)
-  player = mk_player(fd, addr)
+  local player = mk_player(fd, addr)
   register_player(player)
   player:boot()
 end
@@ -26,9 +26,16 @@ end
 
 function disconnect_signal(fd)
   -- notify things before
+  local player = lookup_player(fd)
+  assert(player, "control_signal: unable to find player fd="..fd)
   clear_player(fd)
   -- notify things after ?
   --
+  tell_room_except(
+    player:location(),
+    player.creature,
+    mk_msg(player.creature.name.." disconnected")
+  )
 end
 
 function wake_signal(now)

@@ -24,3 +24,19 @@ write creatures 3 name=baratus&location=room:1&gender=male&form=
 write creatures 4 name=rogue&location=room:1&gender=female&form=
 write creatures 5 name=daedolon&location=room:1&gender=male&form=
 commit
+write items 7 location=room:1
+commit
+write items 7 location=creature:1
+commit
+write items 7 location=room:1
+commit
+write items 7 location=creature:5
+commit
+write items 12 location=creature:1
+commit
+write items 9 location=creature:5
+commit
+write items 9 location=room:1
+commit
+write items 7 location=room:1
+commit

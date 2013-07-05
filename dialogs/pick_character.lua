@@ -30,6 +30,12 @@ function pick_character_dialog(me, username)
     me.char = char
     me.creature = db_find('creature', char.creature)
     register_creature(me, me.creature)
+    tell_room_except(
+      player:location(),
+      player.creature,
+      mk_msg(player.creature.name.." connects")
+    )
+    do_command(me, 'look')
     return main_dialog(me)
   elseif input == 'C' then
     create_character_dialog(me)

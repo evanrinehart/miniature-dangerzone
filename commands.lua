@@ -30,5 +30,6 @@ command_table = {
   unlock = nil,
   pay = nil,
   donate = nil,
-  checkpoint = require('commands/checkpoint')
+  checkpoint = require('commands/checkpoint'),
+  dig = require('commands/dig')
 }

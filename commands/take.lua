@@ -3,7 +3,12 @@ local function take_here(me, args)
   if args.results1.all then
     for i, item in ipairs(items) do
       db_move_item_to(item, me:self_ref())
-      tell(me, "taken ("..item:class().single..")")
+      tell_room2(
+        me:location(),
+        me.creature,
+        mk_msg("taken ("..item:class().single..")"),
+        mk_msg(string.format("%s takes %s", me.creature.name, item:class().single))
+      )
     end
     db_commit()
   else
@@ -12,9 +17,19 @@ local function take_here(me, args)
     db_move_item_to(item, me:self_ref())
     db_commit()
     if item_count > 1 then
-      tell(me, "taken ("..item:class().single..")")
+      tell_room2(
+        me:location(),
+        me.creature,
+        mk_msg("taken ("..item:class().single..")"),
+        mk_msg(string.format("%s takes %s", me.creature.name, item:class().single))
+      )
     else
-      tell(me, "taken")
+      tell_room2(
+        me:location(),
+        me.creature,
+        mk_msg("taken"),
+        mk_msg(string.format("%s takes %s", me.creature.name, item:class().single))
+      )
     end
   end
 end

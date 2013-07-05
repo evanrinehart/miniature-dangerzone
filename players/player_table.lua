@@ -35,8 +35,8 @@ function lookup_player(fd)
   return (assert(the_player_table[fd], "player anomalously not found"))
 end
 
-function player_for_creature(creature_id)
-  return creature_lookup[creature_id]
+function player_for_creature(creature)
+  return creature_lookup[creature.id]
 end
 
 function lookup_player_maybe(fd)
