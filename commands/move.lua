@@ -48,7 +48,10 @@ local function move(me, args)
       db_move_creature_to(me.creature, dest)
       db_commit()
       tell_room(from, string.format("%s goes %s", me.creature.name, direction))
-      tell_room_except(to, me.creature, me.creature.name..' arrives')
+      tell_room_except(to,
+        mk_msg(me.creature),
+        mk_msg(me.creature.name..' arrives')
+      )
       do_command(me, "look")
     else
       tell(me, "there is no way")
