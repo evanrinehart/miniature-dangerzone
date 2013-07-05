@@ -31,5 +31,5 @@ command_table = {
   pay = nil,
   donate = nil,
   checkpoint = require('commands/checkpoint'),
-  dig = require('commands/dig')
+  dig = nil
 }
