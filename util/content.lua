@@ -53,7 +53,10 @@ end
 
 function json_string(s)
   -- in a basic way, we just need to replace newlines with \n
-  return (string.gsub(s, "\n", "\\n"))
+  local u = string.gsub(s, "\\", "\\\\")
+  u = string.gsub(u, "\n", "\\n")
+  u = string.gsub(u, '"', "\\\"")
+  return u
 end
 
 function json_encode(tab)

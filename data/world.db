@@ -40,3 +40,7 @@ write items 9 location=room:1
 commit
 write items 7 location=room:1
 commit
+write creatures 1 location=room:2
+commit
+write creatures 1 location=room:1
+commit
