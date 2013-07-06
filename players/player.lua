@@ -40,6 +40,7 @@ function mk_player(fd, addr)
     char = nil,
     creature = nil,
     dialog = nil,
+    connected = true,
     input_buffer = mk_input_buffer(),
 
     boot = boot,

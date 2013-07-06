@@ -78,7 +78,7 @@ struct connection get_new_connection(){
 }
 
 int net_send(int fd, const char* data, size_t size){
-  int n = send(fd, data, size, 0);
+  int n = send(fd, data, size, MSG_NOSIGNAL);
   if(n == -1){
     fprintf(stderr, "net_send: %s\n", strerror(errno));
     return -1;

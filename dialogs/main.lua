@@ -8,6 +8,9 @@ function main_dialog(me)
   if message ~= '' then
     do_command(me, message)
   end
-  return main_dialog(me)
+
+  if me.connected then
+    return main_dialog(me)
+  end
 end
 
