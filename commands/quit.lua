@@ -9,7 +9,7 @@ return {
       tell(me, "please spell out the whole quit command to really quit")
     end
   end,
-  usage = "quit by itself, spelled out completel",
+  usage = "quit by itself, spelled out completely",
   patterns = {'v'},
   verbs = {'quit', 'q'}
 }
