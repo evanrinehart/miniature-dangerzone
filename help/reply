@@ -1,0 +1,8 @@
+COMMANDS
+
+reply <message>
+re <message>
+
+Use reply to respond to a private message. It will send your message in the same way as tell to the last person who you were privately communicating with. Note that you have to use tell once before reply knows which particular person you want to reply to.
+
+See also: tell, say

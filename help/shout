@@ -1,0 +1,8 @@
+COMMANDS
+
+shout <text>
+sh <text>
+
+This command sends a server-wide chat message to all players. Your message will be displayed in BOLD text. If your message isn't particularly urgent then perhaps you should use the gossip command instead.
+
+See also: gossip, say, tell

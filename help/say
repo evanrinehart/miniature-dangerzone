@@ -1,0 +1,8 @@
+COMMANDS
+
+say <text>
+'<text>
+
+Players and other creatures in the same room as you will see you say <text>.
+
+See also: tell, gossip, shout

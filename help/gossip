@@ -1,0 +1,9 @@
+COMMANDS
+
+gossip <text>
+gos <text>
+;<text>
+
+The gossip command sends a server-wide chat message to all players. It may be considered more polite to use gossip than shout for this purpose.
+
+See also: shout, say, tell
