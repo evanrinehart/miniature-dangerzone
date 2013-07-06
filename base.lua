@@ -173,7 +173,8 @@ local structs = {
   creatures = {
     {'name',     'unnamed', percent_decode},
     {'location', nil,       identity},
-    {'gender',   nil,       identity},
+    {'gender',   'white',   identity},
+    {'color',    nil,       identity},
     {'form',     nil,       identity},
     debug = debug_creatures
   },
@@ -358,6 +359,7 @@ local serializers = {
     db_write("name=", percent_encode(c.name), "&")
     db_write("location=", c.location, "&")
     db_write("gender=", c.gender, "&")
+    db_write("color=", c.color, "&")
     db_write("form=", "\n")
   end,
 

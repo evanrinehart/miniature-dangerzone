@@ -1,7 +1,7 @@
 local function shout(me, args)
   local here = me:location()
-  local color = creature_color(me.creature)
   local cr = me.creature
+  local color = cr.color
   local text = args.arg1
   local msg = cr.name..' shouts, "'..text..'"'
 

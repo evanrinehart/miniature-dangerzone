@@ -11,8 +11,7 @@ local function look_around(me, args)
 
     for cr in db_creatures_iter(loc) do
       if cr.id ~= me.creature.id then
-        local color = creature_color(cr)
-        tell(me, cr.name .. " is here.", color)
+        tell(me, cr.name .. " is here.", cr.color)
       end
     end
 

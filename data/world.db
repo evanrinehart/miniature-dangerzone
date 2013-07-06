@@ -18,9 +18,9 @@ write characters 5 name=daedolon&account=1&creature=5
 write rooms 1 zone=&exits.e=room:2&description=A%20blank%20room%20with%20nothing%20all%20around.&name=Dummy%20Room
 write rooms 2 zone=&exits.w=room:1&description=This%20is%20the%20room%20besides%20the%20dummy%20room.&name=The%20Other%20Room
 write accounts 1 username=barfos&password=6721581a6e9d2483d43a50914b30633adbaba780
-write creatures 1 name=barfos&location=room:1&gender=none&form=
-write creatures 2 name=dummy&location=room:1&gender=none&form=
-write creatures 3 name=baratus&location=room:1&gender=male&form=
-write creatures 4 name=rogue&location=room:1&gender=female&form=
-write creatures 5 name=daedolon&location=room:1&gender=male&form=
+write creatures 1 name=barfos&location=room:1&gender=none&color=green&form=
+write creatures 2 name=dummy&location=room:1&gender=none&color=turquoise&form=
+write creatures 3 name=baratus&location=room:1&gender=male&color=ice&form=
+write creatures 4 name=rogue&location=room:1&gender=female&color=magenta&form=
+write creatures 5 name=daedolon&location=room:1&gender=male&color=ice&form=
 commit
