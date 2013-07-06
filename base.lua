@@ -16,7 +16,8 @@ local base = {
   accounts   = {},
   characters = {},
   items      = {},
-  bubbles    = {}
+  bubbles    = {},
+  zones      = {}
 }
 
 local function index_on(tname, field, encode)
@@ -52,7 +53,8 @@ local index_rebuild = {
   characters_in_account = index_on('characters', 'account', identity),
   creatures_in_things = index_on('creatures', 'location', identity),
   usernames = unique_index_on('accounts', 'username', identity),
-  items_in_things = index_on('items', 'location', identity)
+  items_in_things = index_on('items', 'location', identity),
+  rooms_in_zones = index_on('rooms', 'zone', identity)
 }
 
 local indexes = {}
@@ -128,33 +130,6 @@ local function execute_all_modifications()
 end
 
 
---- debug --
-
-local function debug_rooms()
-  print('rooms:')
-
-  local function show_exits(exits)
-    local buf = {}
-    for d, ref in pairs(exits) do
-      table.insert(buf, d)
-    end
-    return table.concat(buf)
-  end
-
-  for id, room in pairs(base.rooms) do
-    print(id, room.name, show_exits(room.exits))
-  end
-end
-
-local function debug_creatures()
-  print('creatures:')
-
-  for id, c in pairs(base.creatures) do
-    print(id, c.name, c.location)
-  end
-end
-
-
 
 --- deserialization ---
 
@@ -168,15 +143,14 @@ local structs = {
     {'name',        '', percent_decode},
     {'description', '', percent_decode},
     {'exits',       {}, identity},
-    debug = debug_rooms
+    {'zone',       nil, tonumber}
   },
   creatures = {
     {'name',     'unnamed', percent_decode},
     {'location', nil,       identity},
     {'gender',   'white',   identity},
     {'color',    nil,       identity},
-    {'form',     nil,       identity},
-    debug = debug_creatures
+    {'form',     nil,       identity}
   },
   accounts = {
     {'username', '', percent_decode},
@@ -192,6 +166,9 @@ local structs = {
     {'class',      item_class, nil},
     {'location',   nil,        identity},
     {'count',      nil,        tonumber}
+  },
+  zones = {
+    {'name', '', identity}
   }
 }
 
@@ -392,6 +369,10 @@ local serializers = {
     end
 
     db_write("\n")
+  end,
+
+  zones = function(zone)
+    db_write("write zones ", zone.id, " name=", zone.name, "\n")
   end
 }
 

@@ -10,6 +10,8 @@ write items 9 location=room:1&class_name=gold_bag&count=16
 write items 10 location=creature:3&class_name=gold_bag&count=5
 write items 12 location=room:1&class_name=gold_bag&count=4
 write items 13 location=creature:3&class_name=gold_bag&count=3
+write zones 1 name=testing
+write zones 2 name=midgaard
 write characters 1 name=barfos&account=1&creature=1
 write characters 2 name=dummy&account=1&creature=2
 write characters 3 name=baratus&account=1&creature=3
