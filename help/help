@@ -1,0 +1,10 @@
+COMMANDS
+
+help
+help <topic>
+
+Use the help command to get a detailed description on a topic. If you type help by itself you will get this page. <topic> can be a command, a zone, a skill, an unrecognized unit of terminology, or anything for which a help file has been written.
+
+Help files can be found, edited, and created in the help/ directory of the mud.
+
+The help command was the first command to have a help file.
