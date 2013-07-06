@@ -7,7 +7,7 @@ local function shout(me, args)
 
   for player in players_iter() do
     if player ~= me then
-      tell(player, text, color, 'bold')
+      tell(player, msg, color, 'bold')
     end
   end
 

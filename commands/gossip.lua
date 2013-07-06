@@ -6,7 +6,7 @@ local function gossip(me, args)
   local msg = cr.name..': '..text
 
   for player in players_iter() do
-    tell(player, text, color)
+    tell(player, msg, color)
   end
 end
 
