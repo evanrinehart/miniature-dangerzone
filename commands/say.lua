@@ -1,4 +1,4 @@
-function say(me, args)
+local function say(me, args)
   local here = me:location()
   local color = creature_color(me.creature)
   local text = args.arg1
