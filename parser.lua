@@ -89,8 +89,16 @@ function command_search(me, text, all, pick)
     end
   end
 
+  for pl in players_iter() do
+    if text == pl.creature.name then
+      table.insert(results.players, pl)
+      if pl.creature.location == here then
+        table.insert(results.players_here, pl)
+      end
+    end
+  end
+
   -- search for decorations here
-  -- search for names of connected players
 
   return results
 end
@@ -226,7 +234,7 @@ local function vpo(me, preps, raw)
 end
 
 local function vox(me, raw)
-  local left, rest = string.match(arg, "(%S+)%s+(%S.*)")
+  local left, rest = string.match(raw, "(%S+)%s+(%S.*)")
   if left then
     local arg, all, pick = check_picker(left)
     local results = command_search(me, arg, all, pick)
