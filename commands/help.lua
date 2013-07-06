@@ -1,9 +1,11 @@
 local function help_about(me, topic)
   local file = io.open('help/'..topic, 'r')
   if file then
+    tell(me, '')
     for l in file:lines() do
       tell(me, l, 'wrap')
     end
+    tell(me, '')
     file:close()
   else
     tell(me, "no help found on that topic")
