@@ -255,7 +255,11 @@ end
 function pattern_match_command(me, c, text)
   local name, rest
   for i, verb in ipairs(c.verbs) do
-    name, rest = string.match(text, "^("..verb..")%s+(.*)")
+    if verb == "'" or verb == ';' then
+      name, rest = string.match(text, "^("..verb..")%s*(%S?.*)")
+    else
+      name, rest = string.match(text, "^("..verb..")%s+(.*)")
+    end
     if name then break end
     name = string.match(text, "^"..verb.."$")
     rest = ''
