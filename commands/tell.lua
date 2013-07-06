@@ -10,11 +10,14 @@ local function tell_cmd(me, args)
 
   if #players > 0 then
     local msg_them = cr.name..' tells you, "'..text..'"'
-    tell(players[1], msg_them, color, bold)
-    tell(me, 'you tell '..players[1].creature.name..', "'..text..'"')
+    tell(players[1], msg_them, color, 'bold')
+    tell(me,
+      'you tell '..players[1].creature.name..', "'..text..'"',
+      color, 'bold'
+    )
     me.reply_to = players[1]
   elseif #creatures > 0 then
-    tell(me, 'you tell '..creatures[1].name..', "'..text..'"')
+    tell(me, 'you tell '..creatures[1].name..', "'..text..'"',color,'bold')
     me.reply_to = nil
   else
     tell(me, args.arg1..' not found')
