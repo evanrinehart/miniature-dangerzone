@@ -31,9 +31,9 @@ function pick_character_dialog(me, username)
     me.creature = db_find('creature', char.creature)
     register_creature(me, me.creature)
     tell_room_except(
-      player:location(),
-      player.creature,
-      mk_msg(player.creature.name.." connects")
+      me:location(),
+      me.creature,
+      mk_msg(me.creature.name.." connects")
     )
     do_command(me, 'look')
     return main_dialog(me)

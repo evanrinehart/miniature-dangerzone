@@ -488,6 +488,7 @@ function db_commit()
   assert(database_log_file, "no database log file")
   execute_all_modifications()
   db_write("commit\n")
+  database_log_file:flush()
 end
 
 function db_rollback()

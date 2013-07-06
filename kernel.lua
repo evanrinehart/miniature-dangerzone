@@ -19,23 +19,23 @@ function connect_signal(fd, addr)
 end
 
 function control_signal(fd, text)
-  player = lookup_player(fd)
+  local player = lookup_player(fd)
   assert(player, "control_signal: unable to find player fd="..fd)
   player:take_input(text)
 end
 
 function disconnect_signal(fd)
-  -- notify things before
   local player = lookup_player(fd)
   assert(player, "control_signal: unable to find player fd="..fd)
   clear_player(fd)
-  -- notify things after ?
-  --
-  tell_room_except(
-    player:location(),
-    player.creature,
-    mk_msg(player.creature.name.." disconnected")
-  )
+
+  if player.creature then
+    tell_room_except(
+      player:location(),
+      player.creature,
+      mk_msg(player.creature.name.." disconnected")
+    )
+  end
 end
 
 function wake_signal(now)
