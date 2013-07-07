@@ -140,7 +140,7 @@ function start_combat(attacker, defender)
   combat_instance_table[s.location] = s
 
   local function combat_event(now)
-    local ok = combate_routine(s, 'turn')
+    local ok = combat_routine(s, 'turn')
     if ok then
       schedule_event(now+1, combat_event)
     else
