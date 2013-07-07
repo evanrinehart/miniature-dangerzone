@@ -42,6 +42,7 @@ local function load_room(zone, code)
   local path = 'zones/'..zone.name..'/rooms/'..code
   local file = io.open(path)
   local raw = file:read('*a')
+  file:close()
   local block_a, block_b = split(raw, "\r?\n\r?\n\r?\n")
 
   if not block_a then error("room file "..code.." must contain a triple newline") end
