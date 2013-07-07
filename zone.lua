@@ -1,5 +1,5 @@
 
-local function parse_exits(raw)
+local function parse_exits(raw, my_code)
   local exits = {}
 
   if raw == '(no exits)' then return {} end
@@ -8,7 +8,7 @@ local function parse_exits(raw)
   for i, line in ipairs(lines) do
     local dir, rest = string.match(line, "^([nsewud]):%s+(%S.*)")
 
-    if not dir then error("invalid exit line (dir)") end
+    if not dir then error(my_code.." invalid exit line (dir)") end
 
     rest = trim(rest)
 
@@ -20,7 +20,7 @@ local function parse_exits(raw)
       if code then
         exits[dir] = {kind='normal', code=code}
       else
-        error("invalid exit line (params)")
+        error(my_code.." invalid exit line (params)")
       end
     end
   end
@@ -44,7 +44,7 @@ local function load_room(zone, code)
   local raw = file:read('*a')
   local block_a, block_b = split(raw, "\r?\n\r?\n\r?\n")
 
-  if not block_a then error("room file must contain a triple newline") end
+  if not block_a then error("room file "..code.." must contain a triple newline") end
 
   local name, raw_description = split(block_a, "\r?\n\r?\n")
 
@@ -58,7 +58,7 @@ local function load_room(zone, code)
     exits_raw = trim(block_b)
   end
 
-  local exits = parse_exits(exits_raw)
+  local exits = parse_exits(exits_raw, code)
 
   return {
     code = code,
@@ -123,5 +123,4 @@ print("failed to autoload zone "..name..": "..err)
       end
     end
   end
-
 end

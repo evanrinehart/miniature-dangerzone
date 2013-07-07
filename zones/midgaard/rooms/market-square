@@ -1,0 +1,15 @@
+Market Square
+
+You are standing on the market square, the famous Square of Midgaard.
+A large, peculiar looking statue is standing in the middle of the square.
+Roads lead in every direction, north to the temple square, south to the
+common square, east and westbound is the main street.
+
+
+e: main-street-5
+w: main-street-3
+n: temple-square
+s: common-square
+
+statue
+It is the statue of Corvus King of All Known Lands.

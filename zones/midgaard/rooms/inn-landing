@@ -1,0 +1,9 @@
+Inn Landing
+
+Hallways lead east and west to the inn's sleeping quarters. The stairs
+down to the reception desk are here.
+
+
+d: inn-desk
+w: inn-hallway-1
+e: inn-hallway-2

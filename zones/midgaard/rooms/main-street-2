@@ -1,0 +1,11 @@
+Main Street
+
+You are on the main street passing through the City of Midgaard.  South of
+here is the entrance to the steak house, and the bank is to the north.
+The main street continues east and west.
+
+
+e: main-street-3
+w: main-street-1
+s: steak-house
+n: bank

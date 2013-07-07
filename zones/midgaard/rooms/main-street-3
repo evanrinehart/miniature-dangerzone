@@ -1,0 +1,11 @@
+Main Street
+
+You are on the main street passing through the City of Midgaard.  South of
+here is the entrance to the Armory, and the bakery is to the north.  East of
+here is the market square.
+
+
+e: market-square
+w: main-street-2
+s: armory
+n: bakery

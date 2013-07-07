@@ -1,0 +1,9 @@
+Wall Road
+
+This road winds its way around the wall surrounding the city of Midgaard.
+The road continues north here. To the south is the west gate.
+
+
+s: west-gate
+n: wall-2
+e: stables

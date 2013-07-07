@@ -564,8 +564,8 @@ function db_create_zone(zone)
   zone.id = id
   enqueue_mod(function()
     base.zones[id] = zone
-    indexes[zone.name] = id
-    serializers.items(item)
+    indexes.zone_names[zone.name] = id
+    serializers.zones(zone)
   end)
 end
 
@@ -614,7 +614,7 @@ function db_fix_exits(room, lookup)
       elseif record.kind == 'linkage' then
         local zone = db_find_zone_by_name(record.zone)
         room.exits[dir] = nil
-        table.insert(broken_linkages, {room, dir, record.linkage})
+        table.insert(broken_linkages, {room, dir, record.zone, record.linkage})
       end
     end
   end)
@@ -710,4 +710,5 @@ end
 function debug_database()
   pp(base)
   pp(indexes)
+  pp(broken_linkages)
 end

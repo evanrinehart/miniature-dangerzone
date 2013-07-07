@@ -1,0 +1,11 @@
+Main Street
+
+You are on the main street passing through the City of Midgaard.
+South of here is the entrance to the laboratory, and the oddities
+shop is to the north. West of here is the west gate.
+
+
+w: west-gate
+e: main-street-2
+n: oddities
+s: laboratory

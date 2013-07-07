@@ -1,0 +1,9 @@
+In the Canal
+
+The canal runs east and west through Midgaard. To the north you see the
+dock where boats enter and leave the canal.
+
+
+w: canal-4
+e: canal-6
+n: dock
