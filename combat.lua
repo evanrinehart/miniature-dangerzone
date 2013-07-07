@@ -107,7 +107,6 @@ local function combat_routine(s, event, arg1, arg2)
     end
 
     if #(s.fights) == 0 then -- battle is over
-      combat_tell(s, "combat has ended!")
       return nil
     end
   elseif event == 'command' then
