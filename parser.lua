@@ -25,6 +25,20 @@ local function item_match(item, text)
   return false, false
 end
 
+local function creature_match(cr, text)
+  if cr:name() == text then
+    return true
+  else
+    local aliases = cr:class().aliases
+    for i, alias in ipairs(aliases) do
+      if string.match(alias, "^"..text) then
+        return true
+      end
+    end
+    return false
+  end
+end
+
 -- after the command parser determines that
 -- you want one or two things to be searched for
 -- in the area, it runs this on the text for each
@@ -43,7 +57,7 @@ end
 -- one they want. put it in pick= in the result so
 -- the command can deal with it
 
-function command_search(me, text, all, pick)
+local function command_search(me, text, all, pick)
   local results = {
     items_held = {},
     items_here = {},
@@ -81,7 +95,7 @@ function command_search(me, text, all, pick)
   end
 
   for cr in db_creatures_iter(here) do
-    if text == cr:name() or text == 'all' then
+    if creature_match(cr, text) or text == 'all' then
       table.insert(results.creatures_or_self, cr)
       if cr.id ~= me.creature.id then
         table.insert(results.creatures, cr)
