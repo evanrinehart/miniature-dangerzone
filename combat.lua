@@ -85,7 +85,10 @@ local function play_fight(s, fight, us, them)
 end
 
 local function combat_routine(s, event, arg1, arg2)
+  local here = s.location
+
   if event == 'turn' then
+    tell_room(here, mk_msg("combat instance turn"))
     local end_these_fights = {}
     for i, fight in ipairs(s.fights) do
       local points
@@ -93,8 +96,10 @@ local function combat_routine(s, event, arg1, arg2)
       local result = play_fight(s, fight, us, them)
 
       if result == 'ended' then
+        tell_room(here, mk_msg("fight "..i.." ended"))
         table.insert(end_these_fights, i)
       elseif result == 'continue' then
+        tell_room(here, mk_msg("fight "..i.." continues"))
         -- do nothing
       else
         error("invalid fight result")
@@ -107,9 +112,11 @@ local function combat_routine(s, event, arg1, arg2)
     end
 
     if #(s.fights) == 0 then -- battle is over
+      tell_room(here, mk_msg("battle is over"))
       return nil
     end
   elseif event == 'command' then
+      tell_room(here, mk_msg("command issued"))
     -- interpret the command
     -- if no fights left, cancel turn event
     -- if no fights left, cancel turn event
