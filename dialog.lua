@@ -6,7 +6,11 @@ local function raw_msg(player, json)
 end
 
 local function enc(text, opts)
-  return json_encode(encode_content(text, opts))
+  local really_text = text
+  if type(text) ~= 'string' then
+    really_text = tostring(text)
+  end
+  return json_encode(encode_content(really_text, opts))
 end
 
 local function discriminate(cr_me, cr_them)
