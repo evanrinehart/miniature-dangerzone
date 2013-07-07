@@ -10,7 +10,12 @@ write items 9 location=room:1&class_name=gold_bag&count=16
 write items 10 location=creature:3&class_name=gold_bag&count=5
 write items 12 location=room:1&class_name=gold_bag&count=4
 write items 13 location=creature:3&class_name=gold_bag&count=3
+write items 14 location=room:65&class_name=knife
+write items 15 location=room:65&class_name=rope
+write items 16 location=room:65&class_name=lockpicks
+write items 17 location=room:65&class_name=notebook
 write zones 1 name=testing
+write zones 2 name=midgaard
 write characters 1 name=barfos&account=1&creature=1
 write characters 2 name=dummy&account=1&creature=2
 write characters 3 name=baratus&account=1&creature=3
@@ -20,16 +25,6 @@ write rooms 1 zone=1&code=dummy
 write rooms 2 zone=1&code=other
 write rooms 3 zone=1&code=pit
 write rooms 4 zone=1&code=tunnel
-write accounts 1 username=barfos&password=6721581a6e9d2483d43a50914b30633adbaba780
-write creatures 1 xname=barfos&location=room:4&gender=male&color=ice&health=3&stamina=3&food=3&alcohol=3
-write creatures 2 xname=moben&location=room:21&gender=male&color=ice&health=3&stamina=3&food=3&alcohol=3
-write creatures 3 xname=baratus&location=room:1&gender=male&color=ice&health=3&stamina=3&food=3&alcohol=3
-write creatures 4 xname=rogue&location=room:1&gender=female&color=magenta&health=3&stamina=3&food=3&alcohol=3
-write creatures 5 xname=daedolon&location=room:5&gender=male&color=ice&health=3&stamina=3&food=3&alcohol=3
-write creatures 6 xname=grendel&location=room:16&gender=none&color=turquoise&health=3&stamina=3&food=3&alcohol=3
-write creatures 7 class_name=skeleton&location=room:17&gender=none&color=gray
-commit
-write zones 2 name=midgaard
 write rooms 5 zone=2&code=main-street-7
 write rooms 6 zone=2&code=south-gate
 write rooms 7 zone=2&code=main-street-5
@@ -93,4 +88,12 @@ write rooms 64 zone=2&code=back-room
 write rooms 65 zone=2&code=market-square
 write rooms 66 zone=2&code=wall-6
 write rooms 67 zone=2&code=wall-4
+write accounts 1 username=barfos&password=6721581a6e9d2483d43a50914b30633adbaba780
+write creatures 1 xname=barfos&gender=male&color=ice&health=3&stamina=3&food=3&alcohol=3&location=room:4
+write creatures 2 xname=moben&gender=male&color=ice&health=3&stamina=3&food=3&alcohol=3&location=room:21
+write creatures 3 xname=baratus&gender=male&color=ice&health=3&stamina=3&food=3&alcohol=3&location=room:1
+write creatures 4 xname=rogue&gender=female&color=magenta&health=3&stamina=3&food=3&alcohol=3&location=room:1
+write creatures 5 xname=daedolon&gender=male&color=ice&health=3&stamina=3&food=3&alcohol=3&location=room:65
+write creatures 6 xname=grendel&gender=none&color=turquoise&health=3&stamina=3&food=3&alcohol=3&location=room:16
+write creatures 7 gender=none&color=gray&class_name=skeleton&location=room:17
 commit
