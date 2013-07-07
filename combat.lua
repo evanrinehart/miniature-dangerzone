@@ -79,7 +79,6 @@ local function play_fight(s, fight, us, them)
   us.ap = us.ap - 1
   if us.ap == 0 then
     lose_advantage(fight, us, them)
-    return 'lost-advantage'
   end
 
   return 'continue'
