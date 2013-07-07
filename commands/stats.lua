@@ -1,30 +1,18 @@
 local function stats(me, args)
   local cr = me.creature
+  local lines = {
+    {{text="=Character="}},
+    {},
+    {{text="Name: "},{text=cr:name()}},
+    {},
+    {{text="Health:   "},{text=tostring(cr.health)},{text="/3"}},
+    {{text="Stamina:  "},{text=tostring(cr.stamina)},{text="/3"}},
+    {{text="Food:     "},{text=tostring(cr.food)},{text="/3"}},
+    {{text="Alcohol:  "},{text=tostring(cr.alcohol)},{text="/3"}}
+  }
 
-  tell(me, "=Character=")
+  tell_pref(me, lines)
   tell(me, '')
-  tell(me, "Name: ", 'nonl')
-  tell(me, cr:name())
-  tell(me, '')
-
-  tell(me, 'Health:   ', 'nonl')
-  tell(me, cr.health, 'nonl')
-  tell(me, "/3")
-
-  tell(me, 'Stamina:  ', 'nonl')
-  tell(me, cr.stamina, 'nonl')
-  tell(me, "/3")
-
-  tell(me, 'Food:   ', 'nonl')
-  tell(me, cr.food, 'nonl')
-  tell(me, "/3")
-
-  tell(me, 'Alcohol:  ', 'nonl')
-  tell(me, cr.alcohol, 'nonl')
-  tell(me, "/3")
-
-  tell(me, '')
-  
 end
 
 return {

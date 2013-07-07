@@ -37,6 +37,38 @@ function tell_nonl(player, text)
   tell(player, text, 'nonl')
 end
 
+function encode_pref(lines)
+  -- this hurts so much
+  local buf = {'{"preformatted":['}
+  local empty1 = true
+  for i, line in ipairs(lines) do
+    empty1 = false
+    local segbuf = {'['}
+    local empty2 = true
+    for j, seg in ipairs(line) do
+      empty2 = false
+      table.insert(segbuf, json_encode(seg))
+      table.insert(segbuf, ',')
+    end
+    if not empty2 then
+      table.remove(segbuf) -- the last comma
+    end
+    table.insert(segbuf, ']')
+    table.insert(buf, table.concat(segbuf))
+    table.insert(buf, ',')
+  end
+  if not empty1 then
+    table.remove(buf) -- the last comma
+  end
+  table.insert(buf, ']}')
+  return table.concat(buf)
+end
+
+function tell_pref(player, lines)
+  local json = encode_pref(lines)
+  raw_msg(player, json)
+end
+
 function tell_room(loc, msg)
   tell_many(
     db_creatures_iter(loc),
