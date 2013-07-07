@@ -112,7 +112,8 @@ int c_dir(lua_State* L){ /* path */
 
   if(argc == 0){
     fprintf(stderr, "c_dir used with no argument\n");
-    return 0;
+    lua_pushstring(L, "c_dir used with no argument");
+    lua_error(L);
   }
 
   if(!lua_isstring(L, -1)){
@@ -121,15 +122,16 @@ int c_dir(lua_State* L){ /* path */
       "c_dir used with unexpected type (%s)\n",
       lua_typename(L, lua_type(L, -1))
     );
-    return 0;
+    lua_pushstring(L, "c_dir used with unexpected type");
+    lua_error(L);
   }
 
   path = lua_tostring(L, -1);
 
   dirp = opendir(path);
   if(dirp == NULL){
-    perror("opendir");
-    exit(EXIT_FAILURE);
+    lua_pushstring(L, strerror(errno));
+    lua_error(L);
   }
 
   lua_newtable(L);
