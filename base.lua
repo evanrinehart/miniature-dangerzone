@@ -20,29 +20,62 @@ local base = {
   zones      = {}
 }
 
-local function index_on(tname, field, encode)
+local function multiwrite(tab, keys, value)
+  local leaf = tab
+  local levels = #keys - 1
+  for i, k in ipairs(keys) do
+    if i > levels then break end
+    if leaf[k] == nil then
+      leaf[k] = {}
+    end
+    leaf = leaf[k]
+  end
+  leaf[keys[#keys]] = value
+end
+
+local function multiread(tab, keys)
+  local leaf = tab
+  local levels = #keys - 1
+  for i, k in ipairs(keys) do
+    if i > levels then break end
+    if leaf[k] == nil then
+      return nil
+    end
+    leaf = leaf[k]
+  end
+  return leaf[keys[#keys]]
+end
+
+local function index_on(tname, fields)
   return function()
+    local field = fields
     local s = {}
     for id, x in pairs(base[tname]) do
-      local key = encode(x[field])
-      if s[key] == nil then
-        s[key] = {}
+      local keys = {}
+      for i, field in ipairs(fields) do
+        keys[i] = x[field]
       end
-      s[key][id] = true
+      keys[#keys+1] = id
+
+      multiwrite(s, keys, true)
     end
     return s
   end
 end
 
-local function unique_index_on(tname, field, encode)
+local function unique_index_on(tname, fields)
   return function()
     local s = {}
     for id, x in pairs(base[tname]) do
-      local key = encode(x[field])
-      if s[key] == nil then
-        s[key] = id
+      local keys = {}
+      for i, field in ipairs(fields) do
+        keys[i] = x[field]
+      end
+
+      if multiread(s, keys) then
+        error(string.format("duplicate %s (%s)", tname, id))
       else
-        error(string.format("duplicate %s %s (%s)",tname, field, x[field]))
+        multiwrite(s, keys, id)
       end
     end
     return s
@@ -50,11 +83,13 @@ local function unique_index_on(tname, field, encode)
 end
 
 local index_rebuild = {
-  characters_in_account = index_on('characters', 'account', identity),
-  creatures_in_things = index_on('creatures', 'location', identity),
-  usernames = unique_index_on('accounts', 'username', identity),
-  items_in_things = index_on('items', 'location', identity),
-  rooms_in_zones = index_on('rooms', 'zone', identity)
+  characters_in_account = index_on('characters', {'account'}),
+  creatures_in_things = index_on('creatures', {'location'}),
+  usernames = unique_index_on('accounts', {'username'}),
+  items_in_things = index_on('items', {'location'}),
+  rooms_in_zone = index_on('rooms', {'zone'}),
+  zone_names = unique_index_on('zones', {'name'}),
+  room_zone_and_code = unique_index_on('rooms', {'zone','code'})
 }
 
 local indexes = {}
@@ -117,6 +152,7 @@ end
 
 --- modification queue ---
 local modification_queue = {}
+local we_need_commit = false
 
 local function enqueue_mod(action)
   table.insert(modification_queue, action)
@@ -140,10 +176,11 @@ end
 -- (name, default, decoder)
 local structs = {
   rooms = {
-    {'name',        '', percent_decode},
-    {'description', '', percent_decode},
-    {'exits',       {}, identity},
-    {'zone',       nil, tonumber}
+    {'name',        '', nil},
+    {'description', '', nil},
+    {'exits',       {}, nil},
+    {'zone',       nil, tonumber},
+    {'code',        '', identity}
   },
   creatures = {
     {'name',     'unnamed', percent_decode},
@@ -316,18 +353,15 @@ local function db_write(...)
   for i, x in ipairs({...}) do
     database_log_file:write(x)
   end
+  we_need_commit = true
 end
 
 local serializers = {
   rooms = function(room)
     db_write("write rooms ")
     db_write(room.id, " ")
-    db_write("zone=&")
-    for d, ref in pairs(room.exits) do
-      db_write("exits.",d,"=", ref, "&")
-    end
-    db_write("description=", percent_encode(room.description), "&")
-    db_write("name=", percent_encode(room.name), "\n")
+    db_write("zone=", room.zone, "&")
+    db_write("code=", room.code, "\n")
   end,
 
   creatures = function(c)
@@ -460,6 +494,15 @@ function db_check_account_password(username, password_plain)
   end
 end
 
+function db_find_zone_by_name(name)
+  local id = indexes.zone_names[name]
+  if id then
+    return base.zones[id]
+  else
+    return nil
+  end
+end
+
 function db_dummy_creature()
   return base.creatures[2]
 end
@@ -467,11 +510,16 @@ end
 
 --- data modification ---
 
+local broken_linkages = {}
+
 function db_commit()
   assert(database_log_file, "no database log file")
-  execute_all_modifications()
-  db_write("commit\n")
-  database_log_file:flush()
+  if we_need_commit then
+    execute_all_modifications()
+    db_write("commit\n")
+    database_log_file:flush()
+    we_need_commit = false
+  end
 end
 
 function db_rollback()
@@ -511,6 +559,16 @@ function db_create_item(item)
   end)
 end
 
+function db_create_zone(zone)
+  local id = gen_id('zones')
+  zone.id = id
+  enqueue_mod(function()
+    base.zones[id] = zone
+    indexes[zone.name] = id
+    serializers.items(item)
+  end)
+end
+
 function db_modify_count(item, adjustment)
   assert(item.count, "item has no count")
   enqueue_mod(function()
@@ -525,6 +583,84 @@ function db_modify_count(item, adjustment)
     end
   end)
 end
+
+
+--- caching ---
+
+function db_cache_room(room)
+  local new = room.id == nil
+  local id = room.id or gen_id('rooms')
+  room.id = id
+  enqueue_mod(function()
+    base.rooms[id] = room
+    write_index('rooms_in_zone', room.zone, id)
+    multiwrite(
+      indexes.room_zone_and_code,
+      {room.zone, room.code},
+      room.id
+    )
+    if new then
+      serializers.rooms(room)
+    end
+  end)
+  return id
+end
+
+function db_fix_exits(room, lookup)
+  enqueue_mod(function()
+    for dir, record in pairs(room.exits) do
+      if record.kind == 'normal' then
+        room.exits[dir] = lookup[record.code]
+      elseif record.kind == 'linkage' then
+        local zone = db_find_zone_by_name(record.zone)
+        table.insert(broken_linkages, {room, dir, record.linkage})
+      end
+    end
+  end)
+end
+
+function db_fix_broken_linkages()
+  pp(broken_linkages)
+end
+
+-- load a bunch of rooms, create some if necessary
+-- and fix their exit links
+function db_cache_rooms(zone, pre_rooms)
+  local exit_links = {}
+  for room in index_iter('rooms_in_zone', zone.id, 'rooms') do
+    exit_links[room.code] = 'room:'..room.id
+  end
+
+  local rooms = {}
+  for i, pre_room in ipairs(pre_rooms) do
+    local _, id
+    local code = pre_room.code
+
+    if exit_links[code] then
+      _, id = split_ref(exit_links[code])
+    end
+
+    local room = {
+      id = id or nil,
+      name = pre_room.name,
+      description = pre_room.description,
+      code = code,
+      exits = pre_room.exits,
+      zone = zone.id
+    }
+
+    id = db_cache_room(room)
+
+    exit_links[code] = 'room:'..id
+    table.insert(rooms, room)
+  end
+
+  for i, room in ipairs(rooms) do
+    db_fix_exits(room, exit_links)
+  end
+end
+
+
 
 
 --- maintenance ---
@@ -570,3 +706,7 @@ function db_begin(working_file)
   end
 end
 
+function debug_database()
+  pp(base)
+  pp(indexes)
+end

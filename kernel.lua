@@ -8,8 +8,11 @@ require('util/debug')
 
 require('items')
 
+require('zone')
+
 function boot_signal()
   db_begin("data/world.db")
+  autoload_zones()
 end
 
 function connect_signal(fd, addr)
