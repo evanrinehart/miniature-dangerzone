@@ -377,7 +377,7 @@ local serializers = {
   creatures = function(c)
     db_write("write creatures ")
     db_write(c.id, " ")
-    if c.x_name then db_write("x_name=", percent_encode(c.x_name), "&") end
+    if c.xname then db_write("xname=", percent_encode(c.xname), "&") end
     db_write("gender=", c.gender, "&")
     db_write("color=", c.color, "&")
     if c.class_name ~= 'null' then
