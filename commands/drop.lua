@@ -24,7 +24,7 @@ local function drop(me, args)
           mk_msg(item:class().single.." dropped"),
           mk_msg(string.format(
             "%s drops %s",
-            me.creature.name,
+            me.creature:name(),
             item:class().single
           ))
         )

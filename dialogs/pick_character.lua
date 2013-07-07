@@ -33,7 +33,7 @@ function pick_character_dialog(me, username)
     tell_room_except(
       me:location(),
       me.creature,
-      mk_msg(me.creature.name.." connects")
+      mk_msg(me.creature:name().." connects")
     )
     do_command(me, 'look')
     return main_dialog(me)

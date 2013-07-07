@@ -1,28 +1,4 @@
---[[
-implementation notes
-
-a combat instance is a coroutine.
-the inputs to the yield are one of several alternatives:
-  * a combat related command issued by a player
-  * a player enters combat via some command
-  * triggering the next turn
-
-on a turn, the event to trigger the next turn may
-be scheduled (if the combat instance didnt end).
-if it is scheduled the id is saved in order to
-cancel that event if the fight ends due to a command.
-
-on each yield, the event id is returned so that
-the event can be cancelled by the caller if the combat
-instance crashes (due to a bug)
-
-if an error occurs, the error is reported to all players
-involved in the instance. and the turn event is cancelled.
-
-when the combat instance is over (no fights left)
-the coroutine returns normally.
-
-]]--
+local combat_instance_table = {}
 
 local function compare_fight(f1, f2)
   -- (x,y) == (y,x)
@@ -53,60 +29,22 @@ end
 local function mk_combat_instance(initial_fights)
   assert(#initial_fights > 0, "attempting to create an empty combat instance")
 
-  local players = {}
+  local creatures = {}
+
   for i, f in ipairs(initial_fights) do
     local c1 = f.attacker
     local c2 = f.defender
-    local p1 = player_for_creature(c1)
-    local p2 = player_for_creature(c2)
 
-    if p1 then
-      players[c1] = p1
-    end
-
-    if p2 then
-      players[c2] = p2
-    end
+    creatures[c1.id] = c1
+    creatures[c2.id] = c2
   end
 
   return {
     fights = initial_fights,
+    creatures = creatures,
     location = initial_fights[1].attacker.location,
-    turn_event_id = nil,
-    players = players
+    turn_event_id = nil
   }
-end
-
-local function combat_tell(s, text)
-  for cr in db_creatures_iter(s.location) do
-    local watcher = player_for_creature(cr)
-    if watcher then
-      tell(watcher, text)
-    end
-  end
-end
-
-local function combat_tell3(
-  s,
-  from_creature, to_creature,
-  between_them_text, at_you_text, from_you_text
-)
-
-  local from_player = player_for_creature(from_creature)
-  local to_player = player_for_creature(to_creature)
-
-  for cr in db_creatures_iter(s.location) do
-    local watcher = player_for_creature(cr)
-    if watcher then
-      if watcher == from_player then
-        tell(watcher, from_you_text)
-      elseif watcher == to_player then
-        tell(watcher, at_you_text)
-      else
-        tell(watcher, between_them_text)
-      end
-    end
-  end
 end
 
 local function get_fighters(fight)
@@ -127,32 +65,27 @@ end
 
 local function lose_advantage(fight, us, them)
   fight.advantage = opposite_advantage(fight.advantage)
-  them.advantage_points = d6()
+  them.ap = d6()
 end
 
 local function play_fight(s, fight, us, them)
   -- heart of darkness
-  combat_tell3(s, us, them,
-    "someone does something to someone!",
-    "someone does something to you!",
-    "you do something to someone!"
-  )
+  local here = s.location
 
   if d6() == 1 and d6() < 6 then
     return 'ended'
   end
 
-  us.advantage_points = us.advantage_points - 1
-  if us.advantage_points == 0 then
+  us.ap = us.ap - 1
+  if us.ap == 0 then
+    lose_advantage(fight, us, them)
     return 'lost-advantage'
-  else
-    return 'continue'
   end
+
+  return 'continue'
 end
 
-local function combat_routine(s)
-  local event, arg1, arg2 = coroutine.yield()
-
+local function combat_routine(s, event, arg1, arg2)
   if event == 'turn' then
     local end_these_fights = {}
     for i, fight in ipairs(s.fights) do
@@ -162,8 +95,6 @@ local function combat_routine(s)
 
       if result == 'ended' then
         table.insert(end_these_fights, i)
-      elseif result == 'lost-advantage' then
-        lose_advantage(fight, us, them)
       elseif result == 'continue' then
         -- do nothing
       else
@@ -178,60 +109,45 @@ local function combat_routine(s)
 
     if #(s.fights) == 0 then -- battle is over
       combat_tell(s, "combat has ended!")
-      return
+      return nil
     end
   elseif event == 'command' then
-    -- if player not already in combat, insert him
     -- interpret the command
     -- if no fights left, cancel turn event
     -- if no fights left, cancel turn event
-    -- if fight over return
+    -- if fight over return nil
   else
     error("invalid combat event")
   end
 
-  return combat_routine(s)
+  return 'ok'
 end
 
-function continue_combat(event, arg1, arg2, routine)
-  -- id = resume(event, arg1, arg2)
-  -- if error, cancel event, report error
-  -- if ended normally, do nothing
+local function join_combat(s, attacker, defender)
+  tell_creature(attacker, "not implemented")
 end
-
-combat_instance_table = {}
 
 function start_combat(attacker, defender)
-  attacker.advantage_points = d6()
+  attacker.ap = d6()
   local initial_fights = {mk_fight(attacker, defender, true)}
   local s = mk_combat_instance(initial_fights)  
-  local co = coroutine.create(combat_routine)
-  s.co = co
 
-  assert(coroutine.resume(co, s))
-  assert(
-    combat_instance_table[s.location] == nil,
-    "theres already a combat instance here"
-  )
+  if combat_instance_table[s.location] then
+    join_combat(combat_instance_table[s.location], attacker, defender)
+    return
+  end
+
   combat_instance_table[s.location] = s
 
   local function combat_event(now)
-    local ok, msg = coroutine.resume(co, 'turn')
+    local ok = combate_routine(s, 'turn')
     if ok then
-      if coroutine.status(co) == 'suspended' then
-        schedule_event(now+1, combat_event)
-      elseif coroutine.status(co) == 'dead' then
-        combat_instance_table[s.location] = nil
-      else
-        error("combat coroutine in anomalous status: " .. coroutine.status(co) .. "\n")
-      end
+      schedule_event(now+1, combat_event)
     else
-      for _, player in pairs(s.players) do
-        tell(player, "combat coroutine has crashed:")
-        tell(player, msg)
-        player.in_combat = false
-      end
       combat_instance_table[s.location] = nil
+      for _, creature in pairs(s.creatures) do
+        creature.in_combat = false
+      end
     end
   end
 
@@ -239,7 +155,7 @@ function start_combat(attacker, defender)
   local eid0 = schedule_event(now, combat_event)
   s.turn_event_id = eid0
 
-  for _, player in pairs(s.players) do
-    player.in_combat = true
+  for _, creature in pairs(s.creatures) do
+    creature.in_combat = true
   end
 end

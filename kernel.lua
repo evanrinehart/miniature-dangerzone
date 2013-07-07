@@ -36,7 +36,7 @@ function disconnect_signal(fd)
     tell_room_except(
       player:location(),
       player.creature,
-      mk_msg(player.creature.name.." disconnected")
+      mk_msg(player.creature:name().." disconnected")
     )
   end
 end

@@ -6,7 +6,7 @@ local function say(me, args)
 
   tell_room2(here, me.creature,
     mk_msg("you say, \""..text.."\"", color),
-    mk_msg(cr.name.." says, \""..text.."\"", color)
+    mk_msg(cr:name() .. " says, \""..text.."\"", color)
   )
 end
 

@@ -7,7 +7,7 @@ local function take_here(me, args)
         me:location(),
         me.creature,
         mk_msg("taken ("..item:class().single..")"),
-        mk_msg(string.format("%s takes %s", me.creature.name, item:class().single))
+        mk_msg(string.format("%s takes %s", me.creature:name(), item:class().single))
       )
     end
     db_commit()
@@ -21,14 +21,14 @@ local function take_here(me, args)
         me:location(),
         me.creature,
         mk_msg("taken ("..item:class().single..")"),
-        mk_msg(string.format("%s takes %s", me.creature.name, item:class().single))
+        mk_msg(string.format("%s takes %s", me.creature:name(), item:class().single))
       )
     else
       tell_room2(
         me:location(),
         me.creature,
         mk_msg("taken"),
-        mk_msg(string.format("%s takes %s", me.creature.name, item:class().single))
+        mk_msg(string.format("%s takes %s", me.creature:name(), item:class().single))
       )
     end
   end
@@ -43,7 +43,7 @@ local function take_bloopers(me, args)
   if cr.id == me.creature.id then
     tell(me, "you don't get yourself")
   else
-    tell(me, "don't try to get "..cr.name)
+    tell(me, "don't try to get "..cr:name())
   end
 end
 

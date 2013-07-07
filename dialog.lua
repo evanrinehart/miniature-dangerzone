@@ -80,6 +80,14 @@ function tell_room3(loc, me, them, msg_me, msg_them, msg_else)
   )
 end
 
+function tell_creature(cr, text, ...)
+  local player = player_for_creature(cr)
+  if player then
+    local msg = enc(text, {...})
+    raw_msg(player, msg)
+  end
+end
+
 function tell_many(iter, discriminator, msg_me, msg_them, msg_else)
   for cr in iter do
     local pl, which = discriminator(cr)

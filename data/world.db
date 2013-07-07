@@ -21,11 +21,13 @@ write rooms 2 zone=1&code=other
 write rooms 3 zone=1&code=pit
 write rooms 4 zone=1&code=tunnel
 write accounts 1 username=barfos&password=6721581a6e9d2483d43a50914b30633adbaba780
-write creatures 1 name=barfos&location=room:4&gender=none&color=green&form=
-write creatures 2 name=dummy&location=room:1&gender=none&color=turquoise&form=
-write creatures 3 name=baratus&location=room:1&gender=male&color=ice&form=
-write creatures 4 name=rogue&location=room:1&gender=female&color=magenta&form=
-write creatures 5 name=daedolon&location=room:5&gender=male&color=ice&form=
+write creatures 1 xname=barfos&location=room:4&gender=male&color=ice&health=3&stamina=3&food=3&alcohol=3
+write creatures 2 xname=moben&location=room:21&gender=male&color=ice&health=3&stamina=3&food=3&alcohol=3
+write creatures 3 xname=baratus&location=room:1&gender=male&color=ice&health=3&stamina=3&food=3&alcohol=3
+write creatures 4 xname=rogue&location=room:1&gender=female&color=magenta&health=3&stamina=3&food=3&alcohol=3
+write creatures 5 xname=daedolon&location=room:5&gender=male&color=ice&health=3&stamina=3&food=3&alcohol=3
+write creatures 6 xname=grendel&location=room:16&gender=none&color=turquoise&health=3&stamina=3&food=3&alcohol=3
+write creatures 7 class_name=skeleton&location=room:17&gender=none&color=gray
 commit
 write zones 2 name=midgaard
 write rooms 5 zone=2&code=main-street-7

@@ -5,6 +5,8 @@ require('util/percent')
 require('util/misc')
 require('util/password')
 
+require('creature')
+
 local database_log_file = nil
 local database_log_path = nil
 
@@ -173,6 +175,8 @@ local item_class = function(self)
   return item_class_table[self.class_name]
 end
 
+assert(get_creature_class)
+
 -- (name, default, decoder)
 local structs = {
   rooms = {
@@ -183,11 +187,17 @@ local structs = {
     {'code',        '', identity}
   },
   creatures = {
-    {'name',     'unnamed', percent_decode},
-    {'location', nil,       identity},
-    {'gender',   'white',   identity},
-    {'color',    nil,       identity},
-    {'form',     nil,       identity}
+    {'xname',      nil,       percent_decode},
+    {'location',   nil,       identity},
+    {'gender',     'none',    identity},
+    {'color',      'white',   identity},
+    {'health',     0,         tonumber},
+    {'stamina',    0,         tonumber},
+    {'food',       0,         tonumber},
+    {'alcohol',    0,         tonumber},
+    {'class_name', 'null',    identity},
+    {'class', get_creature_class, nil},
+    {'name', get_creature_name, nil},
   },
   accounts = {
     {'username', '', percent_decode},
@@ -367,11 +377,17 @@ local serializers = {
   creatures = function(c)
     db_write("write creatures ")
     db_write(c.id, " ")
-    db_write("name=", percent_encode(c.name), "&")
-    db_write("location=", c.location, "&")
+    if c.x_name then db_write("x_name=", percent_encode(c.x_name), "&") end
     db_write("gender=", c.gender, "&")
     db_write("color=", c.color, "&")
-    db_write("form=", "\n")
+    if c.class_name ~= 'null' then
+      db_write("class_name=", c.class_name, "&")
+    end
+    if c.health > 0 then db_write("health=", c.health, "&") end
+    if c.stamina > 0 then db_write("stamina=", c.stamina, "&") end
+    if c.food > 0 then db_write("food=", c.food, "&") end
+    if c.alcohol > 0 then db_write("alcohol=", c.alcohol, "&") end
+    db_write("location=", c.location, "\n")
   end,
 
   accounts = function(a)

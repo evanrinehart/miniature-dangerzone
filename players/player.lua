@@ -37,7 +37,6 @@ function mk_player(fd, addr)
     fd = fd,
     addr = addr,
     account = nil,
-    char = nil,
     creature = nil,
     dialog = nil,
     connected = true,
@@ -46,8 +45,7 @@ function mk_player(fd, addr)
     boot = boot,
     take_input = take_input,
     location = location,
-    self_ref = self_ref,
-    in_combat = false
+    self_ref = self_ref
   }
 end
 

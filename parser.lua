@@ -81,7 +81,7 @@ function command_search(me, text, all, pick)
   end
 
   for cr in db_creatures_iter(here) do
-    if text == cr.name or text == 'all' then
+    if text == cr:name() or text == 'all' then
       table.insert(results.creatures_or_self, cr)
       if cr.id ~= me.creature.id then
         table.insert(results.creatures, cr)
@@ -90,7 +90,7 @@ function command_search(me, text, all, pick)
   end
 
   for pl in players_iter() do
-    if text == pl.creature.name then
+    if text == pl.creature:name() then
       table.insert(results.players, pl)
       if pl.creature.location == here then
         table.insert(results.players_here, pl)

@@ -11,7 +11,7 @@ local function look_around(me, args)
 
     for cr in db_creatures_iter(loc) do
       if cr.id ~= me.creature.id then
-        tell(me, cr.name .. " is here.", cr.color)
+        tell(me, cr:name() .. " is here.", cr.color)
       end
     end
 
@@ -51,7 +51,7 @@ local function look_at(me, args)
   if next(items) then
     tell(me, "it is " .. items[1]:class().single)
   elseif next(creatures) then
-    tell(me, "it is "..creatures[1].name)
+    tell(me, "it is "..creatures[1]:name())
   elseif next(decorations) then
     tell(me, "you look at it")
   else

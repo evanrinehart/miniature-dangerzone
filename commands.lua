@@ -1,7 +1,9 @@
 command_table = {
   parse = require('commands/parse'),
   kill = require('commands/kill'),
-  knockout = nil,
+  follow = nil,
+  group = nil,
+  ungroup = nil,
   flee = nil,
   resign = nil,
   move = require('commands/move'),
@@ -32,5 +34,6 @@ command_table = {
   pay = nil,
   donate = nil,
   checkpoint = require('commands/checkpoint'),
-  dig = nil
+  dig = nil,
+  stats = require('commands/stats')
 }

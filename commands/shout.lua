@@ -3,7 +3,7 @@ local function shout(me, args)
   local cr = me.creature
   local color = cr.color
   local text = args.arg1
-  local msg = cr.name..' shouts, "'..text..'"'
+  local msg = cr:name()..' shouts, "'..text..'"'
 
   for player in players_iter() do
     if player ~= me then
