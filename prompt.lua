@@ -1,3 +1,3 @@
 function show_prompt(creature)
-  return creature:name() .. '>'
+  return creature:name() .. '> '
 end
