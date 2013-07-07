@@ -1,0 +1,15 @@
+A Tunnel
+
+You're in a small tunnel going north and south. This is a test of the
+rooms file format. This is the end of the first paragraph.
+
+This is the second paragraph. It can extend any number of lines in the
+file but will be joined during the load process. Two newlines will
+separate paragraphs for the sake of room description loading.
+
+Continuing north you see a test of the zone linkage. It should link
+to some part of midgaard.
+
+
+s: pit
+n: linkage midgaard west-gate

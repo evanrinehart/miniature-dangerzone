@@ -19,8 +19,9 @@ write characters 5 name=daedolon&account=1&creature=5
 write rooms 1 zone=1&code=dummy
 write rooms 2 zone=1&code=other
 write rooms 3 zone=1&code=pit
+write rooms 4 zone=1&code=tunnel
 write accounts 1 username=barfos&password=6721581a6e9d2483d43a50914b30633adbaba780
-write creatures 1 name=barfos&location=room:1&gender=none&color=green&form=
+write creatures 1 name=barfos&location=room:4&gender=none&color=green&form=
 write creatures 2 name=dummy&location=room:1&gender=none&color=turquoise&form=
 write creatures 3 name=baratus&location=room:1&gender=male&color=ice&form=
 write creatures 4 name=rogue&location=room:1&gender=female&color=magenta&form=

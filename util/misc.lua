@@ -39,21 +39,25 @@ function split(str, pattern)
   end
 end
 
-function split_lines(str)
+function split_on(str, pattern)
   local buf = {}
-  local line, rest = split(str, "\r?\n")
+  local line, rest = split(str, pattern)
   local last
   if line then
     repeat
       table.insert(buf, line)
       last = rest
-      line, rest = split(rest, "\r?\n")
+      line, rest = split(rest, pattern)
     until line == nil
     table.insert(buf, last)
   else
     buf = {str}
   end
   return buf
+end
+
+function split_lines(str)
+  return split_on(str, "\r?\n")
 end
 
 function defer(f, ...)

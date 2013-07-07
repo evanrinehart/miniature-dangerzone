@@ -613,6 +613,7 @@ function db_fix_exits(room, lookup)
         room.exits[dir] = lookup[record.code]
       elseif record.kind == 'linkage' then
         local zone = db_find_zone_by_name(record.zone)
+        room.exits[dir] = nil
         table.insert(broken_linkages, {room, dir, record.linkage})
       end
     end

@@ -28,6 +28,16 @@ local function parse_exits(raw)
   return exits
 end
 
+local function parse_description(raw)
+  local raw_paragraphs = split_on(raw, "\r?\n\r?\n")
+  local paragraphs = {}
+  for i, rp in ipairs(raw_paragraphs) do
+    local p = string.gsub(rp, "\r?\n", " ")
+    table.insert(paragraphs, "  "..p)
+  end
+  return table.concat(paragraphs, "\n")
+end
+
 local function load_room(zone, code)
   local path = 'zones/'..zone.name..'/rooms/'..code
   local file = io.open(path)
@@ -36,11 +46,11 @@ local function load_room(zone, code)
 
   if not block_a then error("room file must contain a triple newline") end
 
-  local name, description = split(block_a, "\r?\n\r?\n")
+  local name, raw_description = split(block_a, "\r?\n\r?\n")
 
   if not block_a then error("block A must contain at least two sections") end
 
-  description = string.gsub(description, "\r?\n", " ")
+  description = parse_description(raw_description)
 
   local exits_raw, rest = split(block_b, "\r?\n\r?\n")
   
