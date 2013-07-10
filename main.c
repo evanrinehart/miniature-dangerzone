@@ -13,6 +13,7 @@ int main(int argc, char* argv[]){
   open_log("log/server.log");
   write_log("*** SERVER BOOT ***\n");
   signal(SIGINT, clean_up);
+  signal(SIGPIPE, SIG_IGN);
 
   lua_init();
   listen_on(4321);
