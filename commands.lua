@@ -35,5 +35,6 @@ command_table = {
   donate = nil,
   checkpoint = require('commands/checkpoint'),
   dig = nil,
-  stats = require('commands/stats')
+  stats = require('commands/stats'),
+  who = require('commands/who')
 }
