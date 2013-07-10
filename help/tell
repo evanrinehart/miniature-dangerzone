@@ -2,6 +2,10 @@ COMMANDS
 
 tell <someone> <message>
 
-The tell command will send a private message to <someone>. If <someone> is in the same room as you, others in that room may or may not be notified that you are communicating among yourselves. <someone> can be the name of a player that is not in the same room as you. In this case they will get a private message remotely.
+The tell command will send a private message to <someone>. If <someone>
+is in the same room as you, others in that room may or may not be
+notified that you are communicating among yourselves. <someone> can
+be the name of a player that is not in the same room as you. In this
+case they will get a private message remotely.
 
 See also: reply, say, gossip, shout

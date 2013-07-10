@@ -3,7 +3,7 @@ local function help_about(me, topic)
   if file then
     tell(me, '')
     for l in file:lines() do
-      tell(me, l, 'wrap')
+      tell(me, l)
     end
     tell(me, '')
     file:close()
