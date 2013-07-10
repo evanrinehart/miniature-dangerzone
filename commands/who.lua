@@ -7,7 +7,7 @@ local function who(me, args)
       align='left'
     },
     {
-      width=40,
+      width=30,
       align='right'
     }
   }
@@ -17,7 +17,7 @@ local function who(me, args)
   for pl in players_iter() do
     if pl.creature then
       local cr = pl.creature
-      local kind, place = db_lookup_location(cr.location)
+      local kind, place = db_ref(cr.location)
       table.insert(rows, {
         {
           text=cr:name(),
