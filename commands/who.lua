@@ -32,7 +32,14 @@ local function who(me, args)
 
   local data = tabular(rows, cols)
 
-  tell_pref(me, data)
+  tell(me, "Players currently online:")
+  tell(me, '')
+  if #rows > 0 then
+    tell_pref(me, data)
+  else
+    tell(me, "Nobody!")
+  end
+  tell(me, '')
 end
 
 return {
