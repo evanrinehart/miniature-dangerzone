@@ -1,1 +1,11 @@
-climbing a very tall ladder
+This is a hobby MUD written mostly in Lua.
+
+It features an custom transactional database with on-disk log and a
+non-telnet interface intended to be used through a browser via a
+websocket-based client.
+
+Zones are represented as files on the disk and are intended to be
+edited live and reloaded from inside the running server. This never
+causes a loss of objects.
+
+Currently it has very little in the way of an actual world or gameplay.
